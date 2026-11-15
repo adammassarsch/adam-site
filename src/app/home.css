@@ -1,0 +1,464 @@
+/* Home page: the release record. Tokens live in globals.css. */
+
+/* Buttons: one shape across the page */
+
+.button {
+  display: inline-block;
+  background: var(--ink);
+  color: var(--ground);
+  padding: 0.55rem 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 160ms var(--ease-out);
+}
+
+.button:active {
+  transform: scale(0.97);
+}
+
+.button-large {
+  font-size: 1.25rem;
+  padding: 0.9rem 1.5rem;
+}
+
+/* Masthead */
+
+.mast {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 2rem;
+  padding: 1.25rem var(--gutter);
+  border-bottom: 1px solid var(--rule);
+}
+
+.mast-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+}
+
+.mast-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem clamp(1rem, 2.5vw, 2rem);
+}
+
+.mast-nav a:not(.button) {
+  text-decoration: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .mast-nav a:not(.button):hover,
+  .foot a:hover,
+  .contact-links a:hover {
+    text-decoration: underline;
+  }
+}
+
+/* Page: release rail + main column */
+
+.page {
+  display: grid;
+  grid-template-columns: minmax(11rem, 14rem) minmax(0, 1fr);
+}
+
+.rail {
+  border-right: 1px solid var(--rule);
+  padding: 2.5rem 1.5rem 2.5rem var(--gutter);
+}
+
+.rail ol {
+  position: sticky;
+  top: 2.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 1.5rem;
+}
+
+.rail a {
+  display: grid;
+  gap: 0.15rem;
+  color: var(--mute);
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+
+.rail a[aria-current] {
+  color: var(--ink);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rail a:hover {
+    color: var(--ink);
+  }
+}
+
+.rail-date {
+  font-size: 0.875rem;
+}
+
+.rail-title {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.rail a[aria-current] .rail-title {
+  font-weight: 700;
+}
+
+.main {
+  padding: 2.5rem var(--gutter) 0 clamp(1.5rem, 3vw, 3rem);
+  min-width: 0;
+}
+
+/* Hero: the sentence is the largest object on the page */
+
+.hero {
+  font-size: clamp(2.25rem, 1rem + 3.6vw, 5.25rem);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  font-weight: 700;
+  max-width: 17em;
+  text-wrap: balance;
+}
+
+/*
+ * Each claim in the hero links to the release that proves it. The hairline
+ * under it is drawn once on load, one claim after the other.
+ */
+.hero-link {
+  text-decoration: none;
+  background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 100% 0.06em;
+  padding-bottom: 0.02em;
+  transition: background-size 220ms var(--ease-out);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-link {
+    animation: draw-rule 600ms var(--ease-out) both;
+    animation-delay: calc(350ms + var(--i, 0) * 90ms);
+  }
+}
+
+@keyframes draw-rule {
+  from {
+    background-size: 0% 0.06em;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hero-link:hover {
+    background-size: 100% 0.14em;
+  }
+}
+
+/* Vitals strip, borrowed from Scouting Report */
+
+.home-vitals {
+  --vitals-rule: var(--faint);
+  --vitals-label: var(--mute);
+  --vitals-ground: var(--ground);
+  --vitals-pad-x: 0;
+  --vitals-min: 10rem;
+
+  margin-top: clamp(1.75rem, 3vw, 2.5rem);
+  gap: 0 2rem;
+  background: none;
+  border-top: 1px solid var(--faint);
+  border-bottom: 1px solid var(--faint);
+}
+
+/* Releases: identical anatomy, video beside notes */
+
+.releases {
+  display: grid;
+}
+
+.release {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(16rem, 2fr);
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  align-items: start;
+  border-top: 1px solid var(--rule);
+  padding-block: 1.5rem clamp(3rem, 6vw, 5rem);
+}
+
+.release:first-child {
+  margin-top: clamp(2rem, 4vw, 3.5rem);
+}
+
+.release[data-media="none"] {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.release-video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--media);
+  object-fit: cover;
+}
+
+.release-notes {
+  display: grid;
+  gap: 1rem;
+  max-width: var(--measure);
+}
+
+.release-notes h2 {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.release-date {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--mute);
+}
+
+.release-title {
+  font-size: clamp(1.5rem, 1.1rem + 1vw, 2rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+.release-notes p {
+  font-size: 1.0625rem;
+  line-height: 1.5;
+}
+
+.release-fact mark {
+  color: var(--mark-ink);
+  font-weight: 700;
+  padding: 0 0.15em;
+  background: linear-gradient(var(--mark), var(--mark)) no-repeat 0 0 / 100% 100%;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/* The highlighter is drawn once, on the first release only. */
+@media (prefers-reduced-motion: no-preference) {
+  .release:first-child .release-fact mark {
+    animation: draw-mark 700ms var(--ease-out) 700ms both;
+  }
+}
+
+@keyframes draw-mark {
+  from {
+    background-size: 0% 100%;
+  }
+}
+
+.release-tags {
+  list-style: none;
+  padding: 0.75rem 0 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  font-size: 0.9375rem;
+  color: var(--mute);
+  border-top: 1px solid var(--faint);
+}
+
+/* Sections after the record */
+
+.section {
+  border-top: 1px solid var(--rule);
+  padding-block: 1.5rem clamp(3.5rem, 7vw, 6rem);
+}
+
+.section-title {
+  font-size: clamp(1.75rem, 1.2rem + 1.6vw, 2.75rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+}
+
+.section-lead {
+  margin-top: 1rem;
+  font-size: clamp(1.125rem, 1rem + 0.4vw, 1.375rem);
+  line-height: 1.45;
+  max-width: 34em;
+  text-wrap: pretty;
+}
+
+.principles {
+  list-style: none;
+  padding: 0;
+  margin: clamp(2rem, 4vw, 3rem) 0 0;
+  display: grid;
+}
+
+.principles li {
+  display: grid;
+  grid-template-columns: minmax(12rem, 1fr) minmax(0, 2fr);
+  gap: 0.5rem 2.5rem;
+  padding-block: 1.25rem;
+  border-top: 1px solid var(--faint);
+}
+
+.principles h3 {
+  font-size: 1.1875rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.principles p {
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  max-width: var(--measure);
+  text-wrap: pretty;
+}
+
+.about {
+  display: grid;
+  grid-template-columns: minmax(10rem, 16rem) minmax(0, 1fr);
+  grid-template-areas:
+    "title title"
+    "photo text";
+  gap: 2rem clamp(1.5rem, 3vw, 2.5rem);
+  align-items: start;
+}
+
+.about .section-title {
+  grid-area: title;
+}
+
+.about-photo {
+  grid-area: photo;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  object-position: 50% 25%;
+}
+
+.about-text {
+  grid-area: text;
+  font-size: clamp(1.125rem, 1rem + 0.4vw, 1.3125rem);
+  line-height: 1.55;
+  max-width: 34em;
+  text-wrap: pretty;
+}
+
+.contact-title {
+  font-size: clamp(2.5rem, 1rem + 4vw, 5.25rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  font-weight: 700;
+}
+
+.contact-actions {
+  margin-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+}
+
+.contact-address {
+  font-size: 1.0625rem;
+  color: var(--mute);
+}
+
+.contact-links {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0 0;
+  display: flex;
+  gap: 1.5rem;
+  font-size: 1.0625rem;
+}
+
+.contact-links a {
+  text-decoration: none;
+}
+
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 2rem;
+  padding: 1.25rem var(--gutter);
+  border-top: 1px solid var(--rule);
+  font-size: 0.9375rem;
+  color: var(--mute);
+}
+
+.foot a {
+  text-decoration: none;
+}
+
+/* Small screens: the rail folds into a compact strip above the record */
+
+@media (max-width: 52rem) {
+  .page {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .rail {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--ground);
+    border-right: 0;
+    border-bottom: 1px solid var(--rule);
+    padding: 0.75rem var(--gutter);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .rail ol {
+    position: static;
+    grid-auto-flow: column;
+    grid-auto-columns: max-content;
+    gap: 1.5rem;
+  }
+
+  .main {
+    padding: 1.75rem var(--gutter) 0;
+  }
+
+  .release {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .principles li {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .about {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "title"
+      "photo"
+      "text";
+  }
+
+  .about-photo {
+    max-width: 14rem;
+  }
+
+  /* Two short columns, so the first release still reaches the first screen */
+  .home-vitals {
+    --vitals-min: 9rem;
+    gap: 0 1.25rem;
+  }
+
+  .home-vitals .vitals-item:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+
+  .home-vitals .vitals-item {
+    padding-block: 0.625rem;
+  }
+}

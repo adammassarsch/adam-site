@@ -1,26 +1,83 @@
 @import "tailwindcss";
 
+/*
+ * Release Notes: cool grey-white paper, near-black ink, hairline rules and one
+ * acid-yellow highlighter used once per release. Dark mode prints the same
+ * record in reverse; the highlighter does not change.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --ground: oklch(96.4% 0.004 130);
+  --ink: oklch(19% 0.006 140);
+  --mute: oklch(46% 0.008 140);
+  --rule: oklch(19% 0.006 140);
+  --faint: oklch(86% 0.006 130);
+  --mark: oklch(92% 0.19 112);
+  --mark-ink: oklch(19% 0.006 140);
+  --media: oklch(22% 0.03 260);
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --gutter: clamp(1rem, 4vw, 4rem);
+  --measure: 36rem;
+
+  color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --ground: oklch(17% 0.006 140);
+    --ink: oklch(94% 0.004 130);
+    --mute: oklch(72% 0.008 140);
+    --rule: oklch(94% 0.004 130);
+    --faint: oklch(30% 0.006 140);
+    color-scheme: dark;
   }
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-ground: var(--ground);
+  --color-ink: var(--ink);
+  --color-mute: var(--mute);
+  --font-sans: var(--font-grotesk), system-ui, sans-serif;
+}
+
+html {
+  scroll-padding-top: 1.5rem;
+}
+
+@media (max-width: 52rem) {
+  html {
+    /* Room for the sticky release strip on small screens */
+    scroll-padding-top: 5.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), system-ui, sans-serif;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-grotesk), system-ui, sans-serif;
+  font-feature-settings: "tnum" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: var(--mark);
+  color: var(--mark-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+a {
+  color: inherit;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1px;
 }

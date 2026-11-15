@@ -1,0 +1,28 @@
+/* VitalsStrip base styles. Each world sets the --vitals-* properties. */
+
+.vitals {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(var(--vitals-min, 11rem), 100%), 1fr));
+  gap: 1px;
+  margin: 0;
+  background: var(--vitals-rule, currentColor);
+  border-bottom: 1px solid var(--vitals-rule, currentColor);
+}
+
+.vitals-item {
+  background: var(--vitals-ground, Canvas);
+  padding: 0.875rem var(--vitals-pad-x, 1rem);
+}
+
+.vitals dt {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--vitals-label, inherit);
+  margin-bottom: 0.2rem;
+}
+
+.vitals dd {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.35;
+}

@@ -1,28 +1,29 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Familjen_Grotesk } from "next/font/google";
+import { heroSentence, profile } from "@content/profile";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const grotesk = Familjen_Grotesk({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-grotesk",
 });
 
 export const metadata: Metadata = {
-  title: "Adam Massarsch",
+  title: profile.name,
+  description: heroSentence(),
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f3f4f1" },
+    { media: "(prefers-color-scheme: dark)", color: "#151715" },
+  ],
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full">{children}</body>
+    <html lang="en" className={grotesk.variable}>
+      <body>{children}</body>
     </html>
   );
 }

@@ -45,3 +45,8 @@ next-env.d.ts
 
 # local build plan (not published)
 /PLAN.md
+
+# local working files (not published)
+/content/draft-copy.md
+content/svar.md
+/content/adam-portrait.png
