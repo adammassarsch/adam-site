@@ -1,11 +1,15 @@
 // One entry per project. A new project is a new entry here and nothing else.
+
+import { profile } from "./profile";
 // Copy approved by Adam in phase 1; case-page sections are added in phase 4.
 
 export type Video = {
   src: string;
   poster: string;
-  /** What the video shows, for screen readers and as a caption. */
+  /** What the video shows, for screen readers. */
   label: string;
+  /** The visible line under the video: what it is, how long, what to expect. */
+  caption: string;
   durationSeconds: number;
 };
 
@@ -62,13 +66,14 @@ export const projects = [
     tags: ["Next.js", "Supabase", "Claude API", "Realtime", "Vercel"],
     fact: {
       figure: "$0.47 → $0.03",
-      text: "Cost per question in a room with seven papers: the first after a pause, then follow-ups read from the prompt cache.",
+      text: "cost per question in a room with seven papers: the first after a pause, then follow-ups read from the prompt cache.",
     },
     video: {
       src: "/media/seminar-demo.mp4",
       poster: "/media/seminar-demo-poster.jpg",
       label:
         "Demo of Seminar for groups, in Swedish: students in a shared room ask the AI about their material and open a cited page in the PDF.",
+      caption: "Demo · 52 s · no sound · UI in Swedish",
       durationSeconds: 52,
     },
     case: {
@@ -100,7 +105,13 @@ export const projects = [
       ],
       hardest:
         "Citations the group can trust. Anthropic's built-in citations added 31–46 % more input tokens per question in my measurements, so I had the model write its own compact markers (document, page, quote) instead. The server then checks every quote against the extracted text page by page: a correct marker is kept, a wrong page is corrected, and a quote that cannot be found is removed. This also runs on the live stream, so nobody sees half a marker. In testing, 13 of 13 chat markers and 17 of 17 analysis markers passed, each also checked by hand against the PDF. Clicking a citation opens the PDF at that page with the quote highlighted.",
-      links: [{ label: "Demo video above" }, { label: "Repo available on request" }],
+      links: [
+        { label: "Demo video above" },
+        {
+          label: "Repo available on request",
+          href: `mailto:${profile.links.email}?subject=${encodeURIComponent("Seminar for groups: repo access")}`,
+        },
+      ],
     },
   },
   {
@@ -112,13 +123,14 @@ export const projects = [
     tags: ["Claude Code", "Subagents", "Python", "Prompt pipeline"],
     fact: {
       figure: "Two paying customers",
-      text: "In summer 2026.",
+      text: "in summer 2026.",
     },
     video: {
       src: "/media/blue-mesa-demo.mp4",
       poster: "/media/blue-mesa-demo-poster.jpg",
       label:
         "Demo of Blue Mesa, in Swedish: describe who to find, check company size, find a dated reason to buy, find the decision makers and export the list to Excel. The companies shown are made up.",
+      caption: "Demo · 32 s · no sound · UI in Swedish · sample data",
       durationSeconds: 32,
     },
     case: {
@@ -146,7 +158,6 @@ export const projects = [
       ],
       hardest:
         "Stopping a language model from inventing plausible email addresses. The answer was to make “not found” cheap and fabrication impossible to hide: every address must carry its source and class, and the colour coding in the delivered file shows the client exactly how confident each row is.",
-      results: "Two paying customers in summer 2026.",
       links: [{ label: "bluemesa.se (in Swedish)", href: "https://bluemesa.se" }],
     },
   },

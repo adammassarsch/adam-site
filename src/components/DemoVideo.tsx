@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { preload } from "react-dom";
 import type { Video } from "@content/projects";
 
 type Props = {
@@ -8,15 +9,20 @@ type Props = {
   className?: string;
   /** The first video on the page may fetch its metadata straight away. */
   eager?: boolean;
+  /** The poster is the largest thing on screen: fetch it before anything else. */
+  priority?: boolean;
 };
 
 /**
  * Muted, looping product demo. It loads nothing but the poster until it is
  * near the viewport, plays only while visible, and never plays on its own when
  * the visitor has asked for reduced motion. Native controls are always there.
+ * The caption under it says what it is, so nobody mistakes silence or Swedish
+ * for a fault.
  */
-export function DemoVideo({ video, className, eager = false }: Props) {
+export function DemoVideo({ video, className, eager = false, priority = false }: Props) {
   const ref = useRef<HTMLVideoElement>(null);
+  if (priority) preload(video.poster, { as: "image", fetchPriority: "high" });
 
   useEffect(() => {
     const el = ref.current;
@@ -54,18 +60,21 @@ export function DemoVideo({ video, className, eager = false }: Props) {
   }, []);
 
   return (
-    <video
-      ref={ref}
-      className={className}
-      poster={video.poster}
-      muted
-      loop
-      playsInline
-      controls
-      preload={eager ? "metadata" : "none"}
-      aria-label={video.label}
-    >
-      <source src={video.src} type="video/mp4" />
-    </video>
+    <figure className={["demo", className].filter(Boolean).join(" ")}>
+      <video
+        ref={ref}
+        className="demo-video"
+        poster={video.poster}
+        muted
+        loop
+        playsInline
+        controls
+        preload={eager ? "metadata" : "none"}
+        aria-label={video.label}
+      >
+        <source src={video.src} type="video/mp4" />
+      </video>
+      <figcaption className="demo-caption">{video.caption}</figcaption>
+    </figure>
   );
 }

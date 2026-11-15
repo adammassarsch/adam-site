@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { profile } from "@content/profile";
+import { contact } from "@content/site";
 import { projects, type Project } from "@content/projects";
 import { DemoVideo } from "@/components/DemoVideo";
 import { ReleaseRail } from "@/components/ReleaseRail";
@@ -17,6 +18,12 @@ function findCase(slug: string): CaseProject | undefined {
 /** Every case page is fully prerendered; the build fails if that ever changes. */
 export const ensureStatic = "navigation";
 
+/**
+ * Known slugs are prerendered in full. Only an unknown slug reaches the
+ * request-time fallback, which may block on its way to the 404.
+ */
+export const instant = false;
+
 /** Only projects whose case is written get a page. */
 export function generateStaticParams() {
   return projects.filter((p) => "case" in p).map((p) => ({ slug: p.slug }));
@@ -26,9 +33,13 @@ export async function generateMetadata({ params }: PageProps<"/projects/[slug]">
   const { slug } = await params;
   const project = findCase(slug);
   if (!project) return {};
+  const title = `${project.title} · ${profile.name}`;
+  const url = `/projects/${project.slug}`;
   return {
-    title: `${project.title} · ${profile.name}`,
+    title,
     description: project.summary,
+    alternates: { canonical: url },
+    openGraph: { type: "article", siteName: profile.name, title, description: project.summary, url, locale: "en" },
   };
 }
 
@@ -47,12 +58,12 @@ export default async function CasePage({ params }: PageProps<"/projects/[slug]">
       <div className="page">
         <ReleaseRail items={railItems(false)} current={slug} />
 
-        <main className="main">
+        <main className="main" id="main">
           <article className="case" aria-labelledby="case-title">
             <header className="case-head">
               <h1 id="case-title">
-                <span className="case-date">{project.period}</span>
                 <span className="case-title">{project.title}</span>
+                <span className="case-date">{project.period}</span>
               </h1>
               <p className="case-lede">{project.summary}</p>
               {project.fact && (
@@ -67,7 +78,7 @@ export default async function CasePage({ params }: PageProps<"/projects/[slug]">
               </ul>
             </header>
 
-            {project.video && <DemoVideo video={project.video} className="case-video" eager />}
+            {project.video && <DemoVideo video={project.video} className="case-video" eager priority />}
 
             <section className="case-row" aria-labelledby="problem">
               <h2 id="problem">The problem</h2>
@@ -127,6 +138,16 @@ export default async function CasePage({ params }: PageProps<"/projects/[slug]">
               </ul>
             </section>
           </article>
+
+          <section className="case-contact" aria-labelledby="case-contact-title">
+            <h2 id="case-contact-title">Questions about {project.title}?</h2>
+            <p className="case-contact-actions">
+              <a className="button" href={`mailto:${profile.links.email}`}>
+                {contact.action}
+              </a>
+              <span className="case-contact-address">{profile.links.email}</span>
+            </p>
+          </section>
 
           {next && next.slug !== slug && (
             <nav aria-label="Next project" className="case-next">

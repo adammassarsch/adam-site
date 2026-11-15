@@ -23,7 +23,7 @@ export default function Home() {
       <div className="page" id="top">
         <ReleaseRail items={railItems(true)} />
 
-        <main className="main">
+        <main className="main" id="main">
           <h1 className="hero">
             {profile.hero.lead}{" "}
             {heroLinks.map((item, i) => (

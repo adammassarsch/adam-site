@@ -3,7 +3,7 @@ import { DemoVideo } from "./DemoVideo";
 
 type Props = {
   project: Project;
-  /** The first release sits in the first viewport; its video may load early. */
+  /** The first release sits in the first viewport; its poster loads first and its video early. */
   first?: boolean;
 };
 
@@ -22,12 +22,12 @@ export function Release({ project, first = false }: Props) {
       aria-labelledby={titleId}
     >
       {project.video && (
-        <DemoVideo video={project.video} className="release-video" eager={first} />
+        <DemoVideo video={project.video} className="release-video" eager={first} priority={first} />
       )}
       <div className="release-notes">
         <h2 id={titleId}>
-          <span className="release-date">{project.period}</span>
           <span className="release-title">{project.title}</span>
+          <span className="release-date">{project.period}</span>
         </h2>
         <p>{project.summary}</p>
         {project.fact && (

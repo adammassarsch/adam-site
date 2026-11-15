@@ -22,6 +22,9 @@ type Props = {
 export function ReleaseRail({ items, current: fixed }: Props) {
   const tracking = fixed === undefined;
   const [tracked, setTracked] = useState<string | undefined>(items[0]?.slug);
+  // True while a release crosses the reading line. On small screens the rail
+  // only shows then, so it costs no height above or after the record.
+  const [inRecord, setInRecord] = useState(false);
   const current = tracking ? tracked : fixed;
 
   useEffect(() => {
@@ -37,6 +40,7 @@ export function ReleaseRail({ items, current: fixed }: Props) {
       const first = sections[0];
       if (first && first.getBoundingClientRect().top > line) {
         setTracked(first.id);
+        setInRecord(false);
         return;
       }
       const hit = sections.find((s) => {
@@ -44,6 +48,7 @@ export function ReleaseRail({ items, current: fixed }: Props) {
         return r.top <= line && r.bottom > line;
       });
       setTracked(hit?.id);
+      setInRecord(hit !== undefined);
     };
 
     let frame = 0;
@@ -63,7 +68,12 @@ export function ReleaseRail({ items, current: fixed }: Props) {
   }, [items, tracking]);
 
   return (
-    <nav aria-label="Projects" className="rail">
+    <nav
+      aria-label="Projects"
+      className="rail"
+      data-tracking={tracking ? "" : undefined}
+      data-in-record={tracking && inRecord ? "" : undefined}
+    >
       <ol>
         {items.map((item) => (
           <li key={item.slug}>

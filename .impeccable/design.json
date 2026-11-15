@@ -1,0 +1,284 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-15T22:00:00Z",
+  "title": "Design System: Adam Massarsch",
+  "extensions": {
+    "colorMeta": {
+      "paper": {
+        "role": "neutral",
+        "displayName": "Cool Paper",
+        "canonical": "oklch(96.4% 0.004 130)",
+        "tonalRamp": [
+          "oklch(15% 0.002 130)",
+          "oklch(25% 0.003 130)",
+          "oklch(35% 0.003 130)",
+          "oklch(47% 0.004 130)",
+          "oklch(59% 0.004 130)",
+          "oklch(71% 0.003 130)",
+          "oklch(83% 0.003 130)",
+          "oklch(95% 0.002 130)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Press Ink",
+        "canonical": "oklch(19% 0.006 140)",
+        "tonalRamp": [
+          "oklch(15% 0.003 140)",
+          "oklch(25% 0.004 140)",
+          "oklch(35% 0.005 140)",
+          "oklch(47% 0.005 140)",
+          "oklch(59% 0.006 140)",
+          "oklch(71% 0.005 140)",
+          "oklch(83% 0.004 140)",
+          "oklch(95% 0.003 140)"
+        ]
+      },
+      "pencil": {
+        "role": "neutral",
+        "displayName": "Pencil Grey",
+        "canonical": "oklch(46% 0.008 140)",
+        "tonalRamp": [
+          "oklch(15% 0.005 140)",
+          "oklch(25% 0.005 140)",
+          "oklch(35% 0.006 140)",
+          "oklch(47% 0.007 140)",
+          "oklch(59% 0.008 140)",
+          "oklch(71% 0.007 140)",
+          "oklch(83% 0.006 140)",
+          "oklch(95% 0.005 140)"
+        ]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Faint Hairline",
+        "canonical": "oklch(86% 0.006 130)",
+        "tonalRamp": [
+          "oklch(15% 0.003 130)",
+          "oklch(25% 0.004 130)",
+          "oklch(35% 0.005 130)",
+          "oklch(47% 0.005 130)",
+          "oklch(59% 0.006 130)",
+          "oklch(71% 0.005 130)",
+          "oklch(83% 0.004 130)",
+          "oklch(95% 0.003 130)"
+        ]
+      },
+      "plate-frame": {
+        "role": "neutral",
+        "displayName": "Plate Frame",
+        "canonical": "oklch(19% 0.006 140 / 0.35)",
+        "tonalRamp": [
+          "oklch(15% 0.003 140)",
+          "oklch(25% 0.004 140)",
+          "oklch(35% 0.005 140)",
+          "oklch(47% 0.005 140)",
+          "oklch(59% 0.006 140)",
+          "oklch(71% 0.005 140)",
+          "oklch(83% 0.004 140)",
+          "oklch(95% 0.003 140)"
+        ]
+      },
+      "highlighter": {
+        "role": "primary",
+        "displayName": "Acid Highlighter",
+        "canonical": "oklch(92% 0.19 112)",
+        "tonalRamp": [
+          "oklch(15% 0.107 112)",
+          "oklch(25% 0.128 112)",
+          "oklch(35% 0.149 112)",
+          "oklch(47% 0.173 112)",
+          "oklch(59% 0.182 112)",
+          "oklch(71% 0.157 112)",
+          "oklch(83% 0.132 112)",
+          "oklch(95% 0.107 112)"
+        ]
+      },
+      "media-ground": {
+        "role": "neutral",
+        "displayName": "Night Media Ground",
+        "canonical": "oklch(22% 0.03 260)",
+        "tonalRamp": [
+          "oklch(15% 0.017 260)",
+          "oklch(25% 0.02 260)",
+          "oklch(35% 0.023 260)",
+          "oklch(47% 0.027 260)",
+          "oklch(59% 0.029 260)",
+          "oklch(71% 0.025 260)",
+          "oklch(83% 0.021 260)",
+          "oklch(95% 0.017 260)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero sentence, case title, 404 line and \"Let's talk\"."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section titles, Next project, case contact line."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Release titles on the home page."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Release notes, principles and case rows at a 36rem measure."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Dates, tags, captions, vitals labels, footer."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.23, 1, 0.32, 1)",
+        "purpose": "Every authored motion: press, underline draw, highlighter draw, rail strip."
+      },
+      {
+        "name": "press",
+        "value": "transform 160ms ease-out, scale(0.97)",
+        "purpose": "Button press feedback."
+      },
+      {
+        "name": "draw-rule",
+        "value": "600ms ease-out, 350ms + 90ms per claim",
+        "purpose": "Hero claim underlines, once on load."
+      },
+      {
+        "name": "draw-mark",
+        "value": "700ms ease-out, 700ms delay (home) / 450ms (case)",
+        "purpose": "Highlighter under the first figure, once."
+      },
+      {
+        "name": "rail-strip",
+        "value": "enter 240ms ease-out, exit 160ms; reduced motion: 150ms opacity",
+        "purpose": "Mobile release strip on the home page."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "phone",
+        "value": "40rem"
+      },
+      {
+        "name": "stack",
+        "value": "52rem"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one action, Email me. Square, ink, presses to 0.97.",
+      "html": "<a class=\"ds-button\" href=\"#\">Email me</a>",
+      "css": ".ds-button{display:inline-block;background:var(--ink,#121412);color:var(--ground,#f2f4f1);padding:0.55rem 1rem;font-weight:600;text-decoration:none;font-family:'Familjen Grotesk',system-ui,sans-serif;transition:transform 160ms cubic-bezier(0.23,1,0.32,1)}.ds-button:active{transform:scale(0.97)}.ds-button:focus-visible{outline:2px solid var(--ink,#121412);outline-offset:3px}"
+    },
+    {
+      "name": "Large Button",
+      "kind": "button",
+      "refersTo": "button-large",
+      "description": "The closing Email me under Let's talk.",
+      "html": "<a class=\"ds-button-large\" href=\"#\">Email me</a>",
+      "css": ".ds-button-large{display:inline-block;background:var(--ink,#121412);color:var(--ground,#f2f4f1);padding:0.9rem 1.5rem;font-size:1.25rem;font-weight:600;text-decoration:none;font-family:'Familjen Grotesk',system-ui,sans-serif;transition:transform 160ms cubic-bezier(0.23,1,0.32,1)}.ds-button-large:active{transform:scale(0.97)}.ds-button-large:focus-visible{outline:2px solid var(--ink,#121412);outline-offset:3px}"
+    },
+    {
+      "name": "Masthead",
+      "kind": "nav",
+      "refersTo": "button-primary",
+      "description": "Name, three text links and the one button over an ink rule.",
+      "html": "<header class=\"ds-mast\"><a class=\"ds-mast-name\" href=\"#\">Adam Massarsch</a><nav class=\"ds-mast-nav\"><a href=\"#\">Projects</a><a href=\"#\">How I build</a><a href=\"#\">About</a><a class=\"ds-mast-btn\" href=\"#\">Email me</a></nav></header>",
+      "css": ".ds-mast{display:flex;align-items:center;justify-content:space-between;gap:2rem;padding:1.25rem 2rem;border-bottom:1px solid #121412;font-family:'Familjen Grotesk',system-ui,sans-serif;background:#f2f4f1;color:#121412}.ds-mast-name{font-size:1.25rem;font-weight:700;text-decoration:none;color:inherit}.ds-mast-nav{display:flex;align-items:center;gap:1.5rem}.ds-mast-nav a{color:inherit;text-decoration:none;padding-block:0.6rem}.ds-mast-nav a:hover{text-decoration:underline;text-underline-offset:0.2em}.ds-mast-btn{background:#121412;color:#f2f4f1!important;padding:0.55rem 1rem!important;font-weight:600}"
+    },
+    {
+      "name": "Rail Entry",
+      "kind": "nav",
+      "refersTo": "rail-entry",
+      "description": "Date over title; the current entry turns to ink.",
+      "html": "<ol class=\"ds-rail\"><li><a aria-current=\"location\" href=\"#\"><span>Nov 2026</span><b>Seminar for groups</b></a></li><li><a href=\"#\"><span>Summer 2026</span><b>Blue Mesa</b></a></li></ol>",
+      "css": ".ds-rail{list-style:none;padding:0;margin:0;display:grid;gap:1.5rem;font-family:'Familjen Grotesk',system-ui,sans-serif}.ds-rail a{display:grid;gap:0.15rem;color:#565955;text-decoration:none;transition:color 160ms ease}.ds-rail a:hover,.ds-rail a[aria-current]{color:#121412}.ds-rail span{font-size:0.875rem}.ds-rail b{font-size:1.0625rem;font-weight:600}.ds-rail a[aria-current] b{font-weight:700}"
+    },
+    {
+      "name": "Highlighter Fact",
+      "kind": "custom",
+      "refersTo": "highlighter-mark",
+      "description": "The one highlighted figure per release.",
+      "html": "<p class=\"ds-fact\"><mark>$0.47 → $0.03</mark> cost per question in a room with seven papers.</p>",
+      "css": ".ds-fact{font-family:'Familjen Grotesk',system-ui,sans-serif;font-size:1.0625rem;line-height:1.5;color:#121412;font-feature-settings:'tnum' 1}.ds-fact mark{background:#e9f037;color:#121412;font-weight:700;padding:0 0.15em;box-decoration-break:clone;-webkit-box-decoration-break:clone}"
+    },
+    {
+      "name": "Demo Plate",
+      "kind": "custom",
+      "refersTo": "demo-plate",
+      "description": "Footage in a hairline frame with a caption line.",
+      "html": "<figure class=\"ds-plate\"><div class=\"ds-plate-media\"></div><figcaption>Demo · 52 s · no sound · UI in Swedish</figcaption></figure>",
+      "css": ".ds-plate{margin:0;display:grid;gap:0.5rem;font-family:'Familjen Grotesk',system-ui,sans-serif}.ds-plate-media{aspect-ratio:16/9;background:#141a2b;border:1px solid rgba(18,20,18,0.35)}.ds-plate figcaption{font-size:0.875rem;color:#565955}"
+    },
+    {
+      "name": "Tags",
+      "kind": "chip",
+      "refersTo": "rail-entry",
+      "description": "What a release was built with, over a hairline.",
+      "html": "<ul class=\"ds-tags\"><li>Next.js</li><li>Supabase</li><li>Claude API</li></ul>",
+      "css": ".ds-tags{list-style:none;padding:0.75rem 0 0;margin:0;display:flex;flex-wrap:wrap;gap:0.25rem 1rem;font-size:0.9375rem;color:#565955;border-top:1px solid #d0d2ce;font-family:'Familjen Grotesk',system-ui,sans-serif}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Release Record",
+    "overview": "The portfolio is set as a record of releases. Each project is a dated release with what shipped, how it was built and what was measured, always in the same anatomy, so the row itself becomes the ruler. The page is printed matter: cool grey-white paper, near-black ink, hairline rules, and one acid-yellow highlighter stroke per release on the single figure that matters. Dark mode is the same record printed in reverse; the highlighter does not change.\n\nTypography does the work that decoration does elsewhere. One grotesk is used at two extremes of scale: the hero sentence and the closing \"Let's talk\" at architectural size, everything else at reading size with small pencil-grey labels. There are no cards, no shadows, no rounded corners and no gradients. Product footage is the only image that carries weight, and it is presented as a plate: a hairline frame with a caption line under it.\n\nMotion is rare and authored: the hero's underlines draw once on load, the highlighter draws once under the first figure, and on small screens the release strip slides in only while a release is being read. Everything else is instant.",
+    "keyCharacteristics": [
+      "Paper, ink and one highlighter; no other colour",
+      "Hairline rules divide every row; nothing floats in a box",
+      "One family, two extremes of scale, tabular figures throughout",
+      "A left release rail with dates on wide screens; a strip that appears only inside the record on small screens",
+      "Square corners everywhere"
+    ],
+    "rules": [
+      {
+        "name": "The One Stroke Rule",
+        "body": "The highlighter is used once per release, on the figure that proves the release, and nowhere else. A second highlight on the same release dilutes the first.",
+        "section": "colors"
+      },
+      {
+        "name": "The Same Ink Rule",
+        "body": "Dark mode inverts paper and ink but keeps the highlighter and the ink that sits on it unchanged.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two Extremes Rule",
+        "body": "Type is either display-large or reading-size. There are no in-between decorative sizes, eyebrows or kickers above headings.",
+        "section": "typography"
+      },
+      {
+        "name": "The Wrap Rule",
+        "body": "Headings use `text-wrap: balance`, running text uses `text-wrap: pretty`, so no line ends on a single orphaned word.",
+        "section": "typography"
+      },
+      {
+        "name": "The Printed Page Rule",
+        "body": "If it would not survive being printed on paper, it does not belong: no shadows, glows, blurs or glass.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do separate content with 1px rules: ink between rows, hairline inside a release.",
+      "Do use the highlighter exactly once per release, on its proving figure.",
+      "Do frame every piece of footage as a plate with a caption that says what it is, how long, and that it has no sound.",
+      "Do keep running text at or under the 36rem measure, with tabular figures.",
+      "Do gate every motion behind `prefers-reduced-motion: no-preference`, and keep press feedback and colour changes under 250ms."
+    ],
+    "donts": [
+      "Don't put content in cards, add shadows, or round any corner.",
+      "Don't add a second accent colour, gradients, or gradient text.",
+      "Don't put an eyebrow or kicker label above a heading.",
+      "Don't animate on scroll for decoration; motion exists only for the hero underline, the highlighter and the mobile release strip.",
+      "Don't borrow Blue Mesa's logo, colours or name styling; this is a personal identity."
+    ]
+  }
+}

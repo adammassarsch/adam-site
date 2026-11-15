@@ -1,5 +1,7 @@
 # adam-site
 
+[![CI](https://github.com/adammassarsch/adam-site/actions/workflows/ci.yml/badge.svg)](https://github.com/adammassarsch/adam-site/actions/workflows/ci.yml)
+
 Source for [adam.bluemesa.se](https://adam.bluemesa.se), the portfolio of Adam Massarsch.
 
 ## Stack
@@ -8,6 +10,7 @@ Source for [adam.bluemesa.se](https://adam.bluemesa.se), the portfolio of Adam M
 - TypeScript in strict mode, including `noUncheckedIndexedAccess`
 - Tailwind CSS v4
 - Statically rendered pages, no database, deployed on Vercel
+- Link-preview images built at build time with `next/og`, using Familjen Grotesk (SIL Open Font License, see `assets/fonts/OFL.txt`)
 
 ## Running locally
 
@@ -36,3 +39,4 @@ The site is built with [Claude Code](https://claude.com/claude-code), following 
 - `CLAUDE.md` – project context and hard rules the agent follows (for example: only state confirmed facts)
 - `.claude/commands/kolla.md` – the `/kolla` command, which runs the full check suite
 - `.claude/hooks/typecheck.sh` – a hook that type-checks after every TypeScript edit, so errors surface immediately
+- `PRODUCT.md` and `DESIGN.md` – who the site is for, and the design system it is built from

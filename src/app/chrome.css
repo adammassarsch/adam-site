@@ -1,5 +1,35 @@
 /* Site chrome shared by every page: buttons, masthead, release rail, main column, footer. */
 
+/* Skip link: off-screen until a keyboard user reaches it */
+.skip-link {
+  position: absolute;
+  left: var(--gutter);
+  top: 0.75rem;
+  z-index: 10;
+  padding: 0.55rem 1rem;
+  background: var(--ink);
+  color: var(--ground);
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus-visible {
+  transform: none;
+}
+
+/* Every page is masthead, content, footer; short pages keep the footer at the bottom. */
+body {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+body > .page,
+body > .missing {
+  flex: 1 0 auto;
+}
+
 /* Buttons: one shape across the page */
 
 .button {
@@ -49,6 +79,7 @@
 
 .mast-nav a:not(.button) {
   text-decoration: none;
+  padding-block: 0.6rem;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -135,6 +166,28 @@
 
 /* Shared by releases and case pages */
 
+/* A demo is a printed plate: the footage inside a hairline frame, with a
+   caption line under it in the same voice as the release date. */
+.demo {
+  margin: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.demo-video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--media);
+  object-fit: cover;
+  border: 1px solid var(--frame);
+}
+
+.demo-caption {
+  font-size: 0.875rem;
+  color: var(--mute);
+}
+
 .release-tags {
   list-style: none;
   padding: 0.75rem 0 0;
@@ -183,5 +236,60 @@
 
   .main {
     padding: 1.75rem var(--gutter) 0;
+  }
+
+  /*
+   * Home page: the strip is not in the flow. It slides down from the top edge
+   * while a release is being read, and is gone above and after the record.
+   */
+  /* Leaving is quicker than arriving: the reader is already moving on. */
+  .rail[data-tracking] {
+    position: fixed;
+    inset: 0 0 auto;
+    transform: translateY(-100%);
+    visibility: hidden;
+    transition:
+      transform 160ms var(--ease-out),
+      visibility 0s linear 160ms;
+  }
+
+  .rail[data-tracking][data-in-record] {
+    transform: none;
+    visibility: visible;
+    transition:
+      transform 240ms var(--ease-out),
+      visibility 0s;
+  }
+}
+
+/* Reduced motion: the strip fades in place instead of sliding. */
+@media (max-width: 52rem) and (prefers-reduced-motion: reduce) {
+  .rail[data-tracking] {
+    transform: none;
+    opacity: 0;
+    transition:
+      opacity 150ms ease,
+      visibility 0s linear 150ms;
+  }
+
+  .rail[data-tracking][data-in-record] {
+    opacity: 1;
+    transition:
+      opacity 150ms ease,
+      visibility 0s;
+  }
+}
+
+/* Phones: the masthead is one row, name and the one action. The sections
+   are a short scroll away and the rail carries the projects. */
+@media (max-width: 40rem) {
+  .mast {
+    flex-wrap: nowrap;
+    gap: 1rem;
+    padding-block: 0.875rem;
+  }
+
+  .mast-nav a:not(.button) {
+    display: none;
   }
 }

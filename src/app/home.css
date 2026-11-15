@@ -3,7 +3,7 @@
 /* Hero: the sentence is the largest object on the page */
 
 .hero {
-  font-size: clamp(2.25rem, 1rem + 3.6vw, 5.25rem);
+  font-size: clamp(2rem, 1rem + 3.6vw, 5.25rem);
   line-height: 1.04;
   letter-spacing: -0.035em;
   font-weight: 700;
@@ -89,14 +89,6 @@
   grid-template-columns: minmax(0, 1fr);
 }
 
-.release-video {
-  display: block;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  background: var(--media);
-  object-fit: cover;
-}
-
 .release-notes {
   display: grid;
   gap: 1rem;
@@ -108,13 +100,16 @@
   gap: 0.2rem;
 }
 
+/* The title comes first for screen readers; the date still reads above it. */
 .release-date {
+  order: -1;
   font-size: 0.9375rem;
   font-weight: 500;
   color: var(--mute);
 }
 
 .release-title {
+  text-wrap: balance;
   font-size: clamp(1.5rem, 1.1rem + 1vw, 2rem);
   line-height: 1.1;
   letter-spacing: -0.02em;
@@ -124,17 +119,32 @@
 .release-notes p {
   font-size: 1.0625rem;
   line-height: 1.5;
+  text-wrap: pretty;
 }
 
 .release-more a {
   font-weight: 600;
 }
 
-
 /* The highlighter is drawn once, on the first release only. */
 @media (prefers-reduced-motion: no-preference) {
   .release:first-child .release-fact mark {
     animation: draw-mark 700ms var(--ease-out) 700ms both;
+  }
+}
+
+/*
+ * On small screens the first figure sits below the fold, where a timed draw
+ * would finish before anyone sees it. There the stroke follows the scroll
+ * instead, drawn as the figure rises into view.
+ */
+@media (max-width: 52rem) and (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .release:first-child .release-fact mark {
+      animation: draw-mark linear both;
+      animation-timeline: view();
+      animation-range: entry 40% cover 35%;
+    }
   }
 }
 
@@ -150,7 +160,6 @@
   }
 }
 
-
 /* Sections after the record */
 
 .section {
@@ -159,6 +168,7 @@
 }
 
 .section-title {
+  text-wrap: balance;
   font-size: clamp(1.75rem, 1.2rem + 1.6vw, 2.75rem);
   line-height: 1.05;
   letter-spacing: -0.03em;
@@ -189,6 +199,7 @@
 }
 
 .principles h3 {
+  text-wrap: balance;
   font-size: 1.1875rem;
   font-weight: 700;
   line-height: 1.3;

@@ -11,7 +11,9 @@
   gap: 0.35rem;
 }
 
+/* The title comes first for screen readers; the date still reads above it. */
 .case-date {
+  order: -1;
   font-size: 1rem;
   font-weight: 500;
   color: var(--mute);
@@ -57,12 +59,7 @@
 }
 
 .case-video {
-  display: block;
-  width: 100%;
-  aspect-ratio: 16 / 9;
   margin-block: clamp(2rem, 4vw, 3rem);
-  background: var(--media);
-  object-fit: cover;
 }
 
 /* Rows: heading on the left, body on the right, one rule between */
@@ -159,4 +156,33 @@
   .case-row {
     grid-template-columns: minmax(0, 1fr);
   }
+}
+
+/* Contact at the end of every case: the moment the reader is convinced. */
+
+.case-contact {
+  border-top: 1px solid var(--rule);
+  padding-block: 1.5rem clamp(2.5rem, 5vw, 4rem);
+  display: grid;
+  gap: 1.25rem;
+}
+
+.case-contact h2 {
+  font-size: clamp(1.75rem, 1.2rem + 1.6vw, 2.75rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+  text-wrap: balance;
+}
+
+.case-contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+}
+
+.case-contact-address {
+  font-size: 1.0625rem;
+  color: var(--mute);
 }

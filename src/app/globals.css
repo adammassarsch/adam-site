@@ -11,6 +11,7 @@
   --mute: oklch(46% 0.008 140);
   --rule: oklch(19% 0.006 140);
   --faint: oklch(86% 0.006 130);
+  --frame: oklch(19% 0.006 140 / 0.35);
   --mark: oklch(92% 0.19 112);
   --mark-ink: oklch(19% 0.006 140);
   --media: oklch(22% 0.03 260);
@@ -29,6 +30,7 @@
     --mute: oklch(72% 0.008 140);
     --rule: oklch(94% 0.004 130);
     --faint: oklch(30% 0.006 140);
+    --frame: oklch(94% 0.004 130 / 0.3);
     color-scheme: dark;
   }
 }

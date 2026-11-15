@@ -37,14 +37,15 @@ The site proves rather than claims. Every claim is backed by a demo, a link or t
 
 ## Brand Commitments
 
-- A personal identity of its own. It borrows nothing from Blue Mesa's logo, colours or name styling; Blue Mesa is one of three projects
+- A personal identity of its own. It borrows nothing from Blue Mesa's logo, colours or name styling; Blue Mesa is one of two projects
 - Voice: plain, specific and calm. Concrete numbers and mechanisms instead of adjectives. No "Hi, I'm…" hero
 
 ## Evidence on Hand
 
 - Photo of Adam: `public/media/adam-portrait.webp`
-- Seminar demo video: `public/media/seminar-demo.mp4` (52 s, 720p, no audio, UI in Swedish). Temporary: Adam is recording a new one that shows the group seminar with voice
-- Blue Mesa demo video: `public/media/blue-mesa-demo.mp4` (32 s, 720p, no audio, UI in Swedish, made-up companies)
+- Seminar demo video: `public/media/seminar-demo.mp4` (52 s, 720p, about 400 kbit/s, no audio, UI in Swedish). This is the final version. The third-party article page it opens (about 1.6–3.6 s) is blurred so neither its text nor its download watermark can be read; the article title, the highlighted source band and the app around it stay visible. Its poster is a frame from 12.5 s that shows the room, not the article. Any re-encode or new poster must keep the article unreadable
+- Blue Mesa demo video: `public/media/blue-mesa-demo.mp4` (32 s, 720p, no audio, UI in Swedish, sample data)
+- Every demo carries a visible caption that says it is a demo, its length, that it has no sound and that the UI is in Swedish
 - Measured figures approved for publication: Seminar's per-question cost ($0.47 cold, $0.03 cached), 59 % fewer tokens from text extraction, 31–46 % more tokens from built-in citations, 13/13 and 17/17 verified citation markers
 - No testimonials, user numbers or customer names exist. Do not create any
 
