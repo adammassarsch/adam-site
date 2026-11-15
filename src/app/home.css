@@ -48,15 +48,22 @@
   --vitals-label: var(--mute);
   --vitals-ground: var(--ground);
   --vitals-pad-x: 0;
-  --vitals-min: 10rem;
 
-  /* Six facts: three columns of two rows, so no fact sits alone on a row */
-  grid-template-columns: repeat(3, minmax(0, 1fr));
   margin-top: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+/* Six facts: three columns of two rows, so no fact sits alone on a row */
+.home-vitals .vitals {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0 2rem;
   background: none;
   border-top: 1px solid var(--faint);
   border-bottom: 1px solid var(--faint);
+}
+
+/* "More" exists only on small screens */
+.vitals-more {
+  display: none;
 }
 
 /* Releases: identical anatomy, video beside notes */
@@ -281,17 +288,40 @@
     max-width: 14rem;
   }
 
-  /* Two short columns, so the first release still reaches the first screen */
-  .home-vitals {
+  /*
+   * Small screens: the essential facts in two short columns, the rest behind
+   * "More", so the first release still reaches the first screen.
+   */
+  .home-vitals .vitals {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0 1.25rem;
   }
 
-  .home-vitals .vitals-item:last-child:nth-child(odd) {
+  .home-vitals .vitals-item {
+    padding-block: 0.625rem;
+  }
+
+  .home-vitals .vitals:not([data-expanded]) .vitals-item[data-secondary] {
+    display: none;
+  }
+
+  .home-vitals .vitals:not([data-expanded]) .vitals-item[data-wide] {
     grid-column: 1 / -1;
   }
 
-  .home-vitals .vitals-item {
-    padding-block: 0.625rem;
+  .vitals-more {
+    display: block;
+    margin-top: 0.5rem;
+    padding: 0.35rem 0;
+    background: none;
+    border: 0;
+    color: var(--ink);
+    font: inherit;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
+    cursor: pointer;
   }
 }

@@ -3,6 +3,8 @@
 export type Vital = {
   label: string;
   value: string;
+  /** Shown on small screens without opening "More". */
+  essential?: boolean;
 };
 
 export const profile = {
@@ -23,15 +25,19 @@ export const profile = {
     alt: "Portrait of Adam Massarsch",
   },
   vitals: [
-    { label: "Studying", value: "Economics, Mälardalen University, year 1" },
+    { label: "Studying", value: "Economics, Mälardalen University, year 1", essential: true },
     { label: "Before", value: "Western Colorado University, basketball, 2025–26" },
-    { label: "National team", value: "Swedish national basketball team\u00a0· U16, U18, U20" },
+    {
+      label: "National team",
+      value: "Swedish national basketball team\u00a0· U16, U18, U20",
+      essential: true,
+    },
     {
       label: "Tagd, 2026",
       value: "Hands-on workshop with their AI engineer on a production lead-gen pipeline",
     },
     { label: "Based", value: "Stockholm and Västerås" },
-    { label: "Looking for", value: "A part-time internship building AI products" },
+    { label: "Looking for", value: "A part-time internship building AI products", essential: true },
   ] satisfies Vital[],
 } as const;
 
