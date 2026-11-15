@@ -4,15 +4,21 @@
  *
  * 1. NEXT_PUBLIC_SITE_URL, set in Vercel once the custom domain is live
  *    (for example https://adam.bluemesa.se)
- * 2. VERCEL_URL, the address Vercel gives the deployment
- * 3. localhost, for `npm run dev` and `npm run start`
+ * 2. In production on Vercel: VERCEL_PROJECT_PRODUCTION_URL, the project's
+ *    stable public address. The per-deployment address can sit behind
+ *    Vercel's deployment protection, where link previews cannot reach it.
+ * 3. In preview deployments: VERCEL_URL, the address of that deployment
+ * 4. localhost, for `npm run dev` and `npm run start`
  */
 function resolveSiteUrl(): string {
   const explicit = process.env.NEXT_PUBLIC_SITE_URL?.trim();
   if (explicit) return explicit.replace(/\/+$/, "");
 
-  const vercel = process.env.VERCEL_URL?.trim();
-  if (vercel) return `https://${vercel}`;
+  const production = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim();
+  if (process.env.VERCEL_ENV === "production" && production) return `https://${production}`;
+
+  const deployment = process.env.VERCEL_URL?.trim();
+  if (deployment) return `https://${deployment}`;
 
   return `http://localhost:${process.env.PORT ?? 3000}`;
 }
