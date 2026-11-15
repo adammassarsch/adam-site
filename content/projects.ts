@@ -121,6 +121,34 @@ export const projects = [
         "Demo of Blue Mesa, in Swedish: describe who to find, check company size, find a dated reason to buy, find the decision makers and export the list to Excel. The companies shown are made up.",
       durationSeconds: 32,
     },
+    case: {
+      problem:
+        "B2B sellers spend much of their time finding out which companies are worth contacting right now, and who to talk to there. Most companies in a market are not ready to buy at any given moment.",
+      built: [
+        "I designed and automated Blue Mesa's prospecting workflow with Claude Code. For each client, an onboarding questionnaire fills a configuration with what they sell and to whom. A pipeline of ten prompt templates then finds prospects, analyses them, finds a recent dated event that gives each one a reason to buy, builds contacts, runs a quality check, prioritises and writes outreach, and generates PDF reports.",
+        "For contact research I wrote a Claude Code skill that runs the work in parallel: the company list is split into groups of 15–25, one subagent per group, all started at once.",
+      ],
+      stack:
+        "Claude Code with subagents and skills, Python (openpyxl) for reading and writing the spreadsheets, LibreOffice headless to check the output renders.",
+      decisions: [
+        {
+          title: "A source hierarchy instead of trust.",
+          text: "Each agent may only use an address from the company's own site, a press release or report where the person is listed, or a proven email pattern on the same domain. LinkedIn and company registries may confirm a role, never an email address.",
+        },
+        {
+          title: "Every row is classified.",
+          text: "Verified (with link), pattern (with the example address that proves the format), generic, or not found. Not found is a valid answer.",
+        },
+        {
+          title: "Code writes the result, not the model.",
+          text: "Agents save JSON; a script writes it into the spreadsheet, never overwrites old data silently, and a check script compares the new file with the original so no rows or values go missing.",
+        },
+      ],
+      hardest:
+        "Stopping a language model from inventing plausible email addresses. The answer was to make “not found” cheap and fabrication impossible to hide: every address must carry its source and class, and the colour coding in the delivered file shows the client exactly how confident each row is.",
+      results: "Two paying customers in summer 2026.",
+      links: [{ label: "bluemesa.se (in Swedish)", href: "https://bluemesa.se" }],
+    },
   },
   {
     slug: "lead-bot",

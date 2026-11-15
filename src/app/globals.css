@@ -76,8 +76,11 @@ body {
   outline-offset: 3px;
 }
 
+/* Tailwind's reset removes underlines; links in running text need theirs back.
+   Navigation, buttons and the hero claims opt out where they are styled. */
 a {
   color: inherit;
+  text-decoration-line: underline;
   text-underline-offset: 0.2em;
   text-decoration-thickness: 1px;
 }
