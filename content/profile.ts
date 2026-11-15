@@ -28,8 +28,8 @@ export const profile = {
   },
   vitals: [
     { label: "Studying", value: "Economics, Mälardalen University, year 1" },
-    { label: "Before", value: "Western Colorado University, 2025–26" },
-    { label: "National teams", value: "Sweden U16, U18, U20" },
+    { label: "Before", value: "Western Colorado University, basketball, 2025–26" },
+    { label: "National team", value: "Swedish national basketball team\u00a0· U16, U18, U20" },
     { label: "Based", value: "Stockholm and Västerås" },
     { label: "Looking for", value: "A part-time internship building AI products" },
   ] satisfies Vital[],
