@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { projects } from "@content/projects";
-import { siteUrl } from "@content/site";
+import { siteUrl } from "@/lib/site-url";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [

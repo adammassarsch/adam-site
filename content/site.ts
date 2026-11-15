@@ -1,6 +1,5 @@
 // Home page copy outside the projects. Approved by Adam in phase 1 (2026-11-15).
 
-export const siteUrl = "https://adam.bluemesa.se";
 export const repoUrl = "https://github.com/adammassarsch/adam-site";
 
 export type Principle = {

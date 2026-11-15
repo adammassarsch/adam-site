@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
 import { brand } from "./brand";
+import { printedDomain } from "./site-url";
 
 export const ogSize = { width: 1200, height: 630 };
 
@@ -63,7 +64,7 @@ export async function renderCard({ date, headline, figure, figureText }: Card) {
           }}
         >
           <span>Adam Massarsch</span>
-          <span style={{ fontWeight: 500, color: brand.mute }}>adam.bluemesa.se</span>
+          {printedDomain && <span style={{ fontWeight: 500, color: brand.mute }}>{printedDomain}</span>}
         </div>
         <div style={{ display: "flex", flexDirection: "column", flexGrow: 1, justifyContent: "center", gap: 18 }}>
           {date && <span style={{ fontSize: 30, fontWeight: 500, color: brand.mute }}>{date}</span>}

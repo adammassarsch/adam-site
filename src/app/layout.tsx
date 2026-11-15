@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Familjen_Grotesk } from "next/font/google";
 import { heroSentence, profile } from "@content/profile";
-import { siteUrl } from "@content/site";
+import { siteUrl } from "@/lib/site-url";
 import { brand } from "@/lib/brand";
 import "./globals.css";
 import "./chrome.css";
