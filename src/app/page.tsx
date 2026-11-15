@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
-import { profile } from "@content/profile";
+import { heroJoiner, profile } from "@content/profile";
 import { projects } from "@content/projects";
 import { about, contact, howIBuild } from "@content/site";
 import { Release } from "@/components/Release";
@@ -28,7 +28,6 @@ export default function Home() {
             {profile.hero.lead}{" "}
             {heroLinks.map((item, i) => (
               <span key={item.text}>
-                {i === heroLinks.length - 1 && "and "}
                 {item.slug ? (
                   <a className="hero-link" href={`#${item.slug}`} style={{ "--i": i } as CSSProperties}>
                     {item.text}
@@ -36,7 +35,7 @@ export default function Home() {
                 ) : (
                   item.text
                 )}
-                {i < heroLinks.length - 1 ? ", " : "."}
+                {heroJoiner(i)}
               </span>
             ))}
           </h1>

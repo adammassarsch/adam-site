@@ -150,12 +150,4 @@ export const projects = [
       links: [{ label: "bluemesa.se (in Swedish)", href: "https://bluemesa.se" }],
     },
   },
-  {
-    slug: "lead-bot",
-    title: "Lead Bot for Tagd",
-    period: "Summer–fall 2026",
-    summary:
-      "Prospect scoring added to Tagd's lead-generation API: dated “why now” events, per-customer scoring and cheaper enrichment.",
-    tags: ["Python", "FastAPI", "Postgres", "Claude API", "React"],
-  },
 ] as const satisfies readonly Project[];

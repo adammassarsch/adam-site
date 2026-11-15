@@ -29,9 +29,9 @@ The site proves rather than claims. Every claim is backed by a demo, a link or t
 - Statically rendered Next.js site: a home page (hero, projects, How I build, About, Contact) and one case page per project at `/projects/[slug]`, all from one template
 - Project content lives in one typed file, `content/projects.ts`
 - Site copy is English and was approved by Adam on 2026-11-15. Copy changes need Adam's approval
-- Three projects, in this order: Seminar for groups, Blue Mesa, Lead Bot for Tagd
+- Two projects, in this order: Seminar for groups, Blue Mesa
 - Seminar's repo is private: the case says "Repo available on request". It has no public live link
-- Lead Bot: Tagd may be named; no code, no media, no results, no links. The work is on feature branches and not in production
+- Tagd appears only as a line in the facts strip: a hands-on workshop with their AI engineer on a production lead-gen pipeline. It is not a project or a case, and nothing more is claimed about it
 - Blue Mesa: two paying customers in summer 2026, never named, no figures about companies or lists. No repo link for Blue Mesa
 - Do not imply any affiliation or endorsement Adam has not confirmed
 
@@ -45,7 +45,6 @@ The site proves rather than claims. Every claim is backed by a demo, a link or t
 - Photo of Adam: `public/media/adam-portrait.webp`
 - Seminar demo video: `public/media/seminar-demo.mp4` (52 s, 720p, no audio, UI in Swedish). Temporary: Adam is recording a new one that shows the group seminar with voice
 - Blue Mesa demo video: `public/media/blue-mesa-demo.mp4` (32 s, 720p, no audio, UI in Swedish, made-up companies)
-- Lead Bot: no images or video exist
 - Measured figures approved for publication: Seminar's per-question cost ($0.47 cold, $0.03 cached), 59 % fewer tokens from text extraction, 31–46 % more tokens from built-in citations, 13/13 and 17/17 verified citation markers
 - No testimonials, user numbers or customer names exist. Do not create any
 

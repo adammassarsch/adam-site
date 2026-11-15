@@ -40,4 +40,4 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
 ## Decisions
 
 - Adam chose Release Notes on 2026-11-15, with the vitals strip from Scouting Report borrowed under the hero
-- Lead Bot has no media; how its release reads is settled in phase 4
+- 2026-11-15: Lead Bot was removed as a project; the record has two releases, and Tagd is one line in the facts strip
