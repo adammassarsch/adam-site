@@ -16,10 +16,11 @@ export const howIBuild = {
     {
       title: "Plan first, one piece at a time.",
       text: "My projects start with a written plan in phases, with a stop after each phase where I test before anything continues. This site was built that way too.",
+      link: { href: `${repoUrl}/blob/main/docs/how-this-was-built.md`, label: "Read how this site was built" },
     },
     {
-      title: "CLAUDE.md as a handover.",
-      text: "The project file says what is built, what is decided, what is waiting and what to watch out for, so the next session, or the next person, can pick it up without asking.",
+      title: "CLAUDE.md as the rulebook.",
+      text: "The project file gives every session the same starting point: what the project is, how to run and check it, and the hard rules, such as only stating confirmed facts and stopping at every review point.",
       link: { href: `${repoUrl}/blob/main/CLAUDE.md`, label: "Read this site’s CLAUDE.md" },
     },
     {

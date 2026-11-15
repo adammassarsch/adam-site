@@ -129,8 +129,8 @@ export const projects = [
       src: "/media/blue-mesa-demo.mp4",
       poster: "/media/blue-mesa-demo-poster.jpg",
       label:
-        "Demo of Blue Mesa, in Swedish: describe who to find, check company size, find a dated reason to buy, find the decision makers and export the list to Excel. The companies shown are made up.",
-      caption: "Demo · 32 s · no sound · UI in Swedish · sample data",
+        "Explainer film for Blue Mesa, in Swedish: describe who to find, check company size, find a dated reason to buy, find the decision makers and export the list to Excel. The companies shown are made up.",
+      caption: "Explainer film · 32 s · no sound · in Swedish",
       durationSeconds: 32,
     },
     case: {
