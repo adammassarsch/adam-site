@@ -1,122 +1,4 @@
-/* Home page: the release record. Tokens live in globals.css. */
-
-/* Buttons: one shape across the page */
-
-.button {
-  display: inline-block;
-  background: var(--ink);
-  color: var(--ground);
-  padding: 0.55rem 1rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: transform 160ms var(--ease-out);
-}
-
-.button:active {
-  transform: scale(0.97);
-}
-
-.button-large {
-  font-size: 1.25rem;
-  padding: 0.9rem 1.5rem;
-}
-
-/* Masthead */
-
-.mast {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem 2rem;
-  padding: 1.25rem var(--gutter);
-  border-bottom: 1px solid var(--rule);
-}
-
-.mast-name {
-  font-size: 1.25rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  text-decoration: none;
-}
-
-.mast-nav {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem clamp(1rem, 2.5vw, 2rem);
-}
-
-.mast-nav a:not(.button) {
-  text-decoration: none;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .mast-nav a:not(.button):hover,
-  .foot a:hover,
-  .contact-links a:hover {
-    text-decoration: underline;
-  }
-}
-
-/* Page: release rail + main column */
-
-.page {
-  display: grid;
-  grid-template-columns: minmax(11rem, 14rem) minmax(0, 1fr);
-}
-
-.rail {
-  border-right: 1px solid var(--rule);
-  padding: 2.5rem 1.5rem 2.5rem var(--gutter);
-}
-
-.rail ol {
-  position: sticky;
-  top: 2.5rem;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
-  gap: 1.5rem;
-}
-
-.rail a {
-  display: grid;
-  gap: 0.15rem;
-  color: var(--mute);
-  text-decoration: none;
-  transition: color 160ms ease;
-}
-
-.rail a[aria-current] {
-  color: var(--ink);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .rail a:hover {
-    color: var(--ink);
-  }
-}
-
-.rail-date {
-  font-size: 0.875rem;
-}
-
-.rail-title {
-  font-size: 1.0625rem;
-  font-weight: 600;
-  line-height: 1.25;
-}
-
-.rail a[aria-current] .rail-title {
-  font-weight: 700;
-}
-
-.main {
-  padding: 2.5rem var(--gutter) 0 clamp(1.5rem, 3vw, 3rem);
-  min-width: 0;
-}
+/* Home page: the release record. Shared chrome lives in chrome.css. */
 
 /* Hero: the sentence is the largest object on the page */
 
@@ -235,14 +117,10 @@
   line-height: 1.5;
 }
 
-.release-fact mark {
-  color: var(--mark-ink);
-  font-weight: 700;
-  padding: 0 0.15em;
-  background: linear-gradient(var(--mark), var(--mark)) no-repeat 0 0 / 100% 100%;
-  box-decoration-break: clone;
-  -webkit-box-decoration-break: clone;
+.release-more a {
+  font-weight: 600;
 }
+
 
 /* The highlighter is drawn once, on the first release only. */
 @media (prefers-reduced-motion: no-preference) {
@@ -251,23 +129,18 @@
   }
 }
 
+/* The figure keeps the page's ink until the highlighter is under it, so it
+   stays readable in dark mode at every frame. */
 @keyframes draw-mark {
   from {
     background-size: 0% 100%;
+    color: var(--ink);
+  }
+  60% {
+    color: var(--ink);
   }
 }
 
-.release-tags {
-  list-style: none;
-  padding: 0.75rem 0 0;
-  margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem 1rem;
-  font-size: 0.9375rem;
-  color: var(--mute);
-  border-top: 1px solid var(--faint);
-}
 
 /* Sections after the record */
 
@@ -383,51 +256,9 @@
   text-decoration: none;
 }
 
-.foot {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 0.5rem 2rem;
-  padding: 1.25rem var(--gutter);
-  border-top: 1px solid var(--rule);
-  font-size: 0.9375rem;
-  color: var(--mute);
-}
-
-.foot a {
-  text-decoration: none;
-}
-
 /* Small screens: the rail folds into a compact strip above the record */
 
 @media (max-width: 52rem) {
-  .page {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .rail {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    background: var(--ground);
-    border-right: 0;
-    border-bottom: 1px solid var(--rule);
-    padding: 0.75rem var(--gutter);
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .rail ol {
-    position: static;
-    grid-auto-flow: column;
-    grid-auto-columns: max-content;
-    gap: 1.5rem;
-  }
-
-  .main {
-    padding: 1.75rem var(--gutter) 0;
-  }
-
   .release {
     grid-template-columns: minmax(0, 1fr);
   }

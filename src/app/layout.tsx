@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Familjen_Grotesk } from "next/font/google";
 import { heroSentence, profile } from "@content/profile";
 import "./globals.css";
+import "./chrome.css";
 
 const grotesk = Familjen_Grotesk({
   subsets: ["latin", "latin-ext"],

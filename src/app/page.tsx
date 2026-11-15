@@ -2,9 +2,10 @@ import type { CSSProperties } from "react";
 import Image from "next/image";
 import { profile } from "@content/profile";
 import { projects } from "@content/projects";
-import { about, contact, howIBuild, repoUrl } from "@content/site";
+import { about, contact, howIBuild } from "@content/site";
 import { Release } from "@/components/Release";
 import { ReleaseRail } from "@/components/ReleaseRail";
+import { Footer, Masthead, railItems } from "@/components/SiteChrome";
 import { VitalsStrip } from "@/components/VitalsStrip";
 import "./home.css";
 
@@ -17,22 +18,10 @@ export default function Home() {
 
   return (
     <>
-      <header className="mast">
-        <a className="mast-name" href="#top">
-          {profile.name}
-        </a>
-        <nav aria-label="Main" className="mast-nav">
-          <a href="#projects">Projects</a>
-          <a href="#how-i-build">How I build</a>
-          <a href="#about">About</a>
-          <a className="button" href={mailto}>
-            {contact.action}
-          </a>
-        </nav>
-      </header>
+      <Masthead onHome />
 
       <div className="page" id="top">
-        <ReleaseRail items={projects} />
+        <ReleaseRail items={railItems(true)} />
 
         <main className="main">
           <h1 className="hero">
@@ -121,10 +110,7 @@ export default function Home() {
         </main>
       </div>
 
-      <footer className="foot">
-        <p>{profile.name}</p>
-        <a href={repoUrl}>Source for this site</a>
-      </footer>
+      <Footer />
     </>
   );
 }

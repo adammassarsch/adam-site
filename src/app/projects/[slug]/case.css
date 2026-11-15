@@ -1,0 +1,162 @@
+/* Case page: the release fully deployed. Same rows, rules and measure as the home page. */
+
+.case-head {
+  display: grid;
+  gap: 1.25rem;
+  max-width: 48rem;
+}
+
+.case-head h1 {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.case-date {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--mute);
+}
+
+.case-title {
+  font-size: clamp(2.5rem, 1.2rem + 3.6vw, 5.25rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  font-weight: 700;
+  text-wrap: balance;
+}
+
+.case-lede {
+  font-size: clamp(1.1875rem, 1rem + 0.5vw, 1.5rem);
+  line-height: 1.4;
+  max-width: 34em;
+  text-wrap: pretty;
+}
+
+.case-fact {
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  max-width: var(--measure);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .case-fact mark {
+    animation: case-draw-mark 700ms var(--ease-out) 450ms both;
+  }
+}
+
+/* The figure keeps the page's ink until the highlighter is under it, so it
+   stays readable in dark mode at every frame. */
+@keyframes case-draw-mark {
+  from {
+    background-size: 0% 100%;
+    color: var(--ink);
+  }
+  60% {
+    color: var(--ink);
+  }
+}
+
+.case-video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin-block: clamp(2rem, 4vw, 3rem);
+  background: var(--media);
+  object-fit: cover;
+}
+
+/* Rows: heading on the left, body on the right, one rule between */
+
+.case-row {
+  display: grid;
+  grid-template-columns: minmax(12rem, 1fr) minmax(0, 2fr);
+  gap: 0.75rem 2.5rem;
+  padding-block: 1.5rem 2.5rem;
+  border-top: 1px solid var(--rule);
+}
+
+.case-row h2 {
+  font-size: 1.375rem;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  font-weight: 700;
+}
+
+.case-body {
+  display: grid;
+  gap: 1rem;
+  max-width: var(--measure);
+}
+
+.case-body p,
+.case-body li {
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+.case-decisions {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
+  display: grid;
+}
+
+.case-decisions li {
+  display: grid;
+  gap: 0.35rem;
+  padding-block: 1rem;
+  border-top: 1px solid var(--faint);
+}
+
+.case-decisions h3 {
+  font-size: 1.0625rem;
+  font-weight: 700;
+}
+
+.case-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.case-next {
+  border-top: 1px solid var(--rule);
+  padding-block: 1.5rem clamp(3.5rem, 7vw, 6rem);
+}
+
+.case-next a {
+  display: inline-grid;
+  gap: 0.25rem;
+  text-decoration: none;
+}
+
+.case-next-label {
+  font-size: 0.9375rem;
+  color: var(--mute);
+}
+
+.case-next-title {
+  font-size: clamp(1.75rem, 1.2rem + 1.6vw, 2.75rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+  background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 0% 0.06em;
+  transition: background-size 220ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .case-next a:hover .case-next-title {
+    background-size: 100% 0.06em;
+  }
+}
+
+.case-next a:focus-visible .case-next-title {
+  background-size: 100% 0.06em;
+}
+
+@media (max-width: 52rem) {
+  .case-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

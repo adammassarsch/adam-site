@@ -40,6 +40,13 @@ export function Release({ project, first = false }: Props) {
             <li key={tag}>{tag}</li>
           ))}
         </ul>
+        {project.case && (
+          <p className="release-more">
+            <a href={`/projects/${project.slug}`}>
+              Read the case<span className="sr-only">: {project.title}</span>
+            </a>
+          </p>
+        )}
       </div>
     </article>
   );
