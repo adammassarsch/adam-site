@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useState, type CSSProperties } from "react";
+import { TokenSwarm } from "./TokenSwarm";
 
 /** One line of the ledger: what a question costs in one state of the cache. */
 export type LedgerRow = {
@@ -19,7 +20,9 @@ type Props = {
   blocks: readonly [string, string, string];
   breakpoint: string;
   perQuestion: string;
-  copy: { scrub: string; now: string; minutes: string; hours: string; note: string };
+  /** How many tokens the cold question was measured at: the swarm draws exactly this many. */
+  tokens: number;
+  copy: { scrub: string; now: string; minutes: string; hours: string; note: string; dot: string; total: string };
 };
 
 const amount = (cost: string) => Number(cost.replace(/[^\d.]/g, ""));
@@ -27,9 +30,10 @@ const amount = (cost: string) => Number(cost.replace(/[^\d.]/g, ""));
 /**
  * Seminar's per-question cost as something to drag. The axis ends at "now";
  * the handle is the previous question. Inside the cache window the stable
- * part of the prompt is read from cache and the cost drops.
+ * part of the prompt is read from cache and the cost drops, and the prompt's
+ * tokens, drawn one by one beside it, settle into a block.
  */
-export function CostLedger({ cold, warm, windowMinutes, blocks, breakpoint, perQuestion, copy }: Props) {
+export function CostLedger({ cold, warm, windowMinutes, blocks, breakpoint, perQuestion, tokens, copy }: Props) {
   const id = useId();
   const span = windowMinutes * 2;
   // Position on the axis in minutes; the right edge is now. Starts cold.
@@ -62,6 +66,13 @@ export function CostLedger({ cold, warm, windowMinutes, blocks, breakpoint, perQ
         <p className="ledger-state">
           <span className="ledger-chip">{active.state}</span>
           {active.detail}
+        </p>
+      </div>
+
+      <div className="ledger-swarm">
+        <TokenSwarm count={tokens} warm={isWarm} label={`${cold.detail}. ${copy.dot}`} />
+        <p className="ledger-note">
+          <strong>{cold.detail}.</strong> {copy.dot} {copy.total}
         </p>
       </div>
 
@@ -108,9 +119,7 @@ export function CostLedger({ cold, warm, windowMinutes, blocks, breakpoint, perQ
       <div className="ledger-prompt">
         <ol className="ledger-stack">
           <li data-cached="">{blocks[0]}</li>
-          <li data-cached="" data-large="">
-            {blocks[1]}
-          </li>
+          <li data-cached="">{blocks[1]}</li>
           <li className="ledger-break">{breakpoint}</li>
           <li>{blocks[2]}</li>
         </ol>

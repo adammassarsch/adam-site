@@ -21,10 +21,10 @@ type Props = {
   replayLabel: string;
 };
 
-const CHARS_PER_SECOND = 80;
+const CHARS_PER_SECOND = 160;
 /** The most characters one frame may type, so a slow frame never dumps a line. */
-const FRAME_BUDGET = 2;
-const HOLD_MS = 600;
+const FRAME_BUDGET = 4;
+const HOLD_MS = 250;
 /** Matches the lab-tear animation in lab.css. */
 const TEAR_MS = 720;
 const MODIFIERS = new Set(["Shift", "Control", "Alt", "Meta"]);

@@ -38,6 +38,8 @@ const copy = {
     minutes: "min",
     hours: "h",
     note: "Blocks are not drawn to scale.",
+    dot: "Each dot is one token.",
+    total: "Only the total is drawn, not how much of it is cached.",
   },
   lanes: {
     check: "No rows lost.",
@@ -146,19 +148,23 @@ const scenes: readonly Scene[] = [
   { id: "contact", label: contact.title },
 ];
 
-/** The session as it is typed. Pauses are in milliseconds, after the segment. */
+/**
+ * The session as it is typed. Pauses are in milliseconds, after the segment.
+ * With the typing speed in Terminal.tsx the whole log takes about 2.5 seconds
+ * before the sheet tears away.
+ */
 const log: readonly LogLine[] = [
-  [{ text: copy.session.loaded, pause: 250 }],
+  [{ text: copy.session.loaded, pause: 120 }],
   ...phases.map((phase, i): LogLine => [
     { text: `${i}  `, tone: "mute" },
-    { text: phase.name, pause: 40 },
+    { text: phase.name, pause: 15 },
   ]),
-  [{ text: copy.session.stop, tone: "stop", pause: 800 }],
+  [{ text: copy.session.stop, tone: "stop", pause: 300 }],
   [
-    { text: copy.session.command, pause: 150 },
+    { text: copy.session.command, pause: 60 },
     ...copy.session.checks.flatMap((check, i, all) => [
       { text: " ✓", tone: "ok" as const },
-      { text: ` ${check}`, pause: i === all.length - 1 ? 300 : 150 },
+      { text: ` ${check}`, pause: i === all.length - 1 ? 120 : 60 },
     ]),
   ],
   [{ text: copy.session.review }],
@@ -246,6 +252,7 @@ export default function Lab() {
               blocks={[prompt.system, prompt.documents, prompt.question]}
               breakpoint={prompt.breakpoint}
               perQuestion={perQuestion.label}
+              tokens={Number(cost.coldTokens.replace(/\D/g, ""))}
               copy={copy.ledger}
             />
 
