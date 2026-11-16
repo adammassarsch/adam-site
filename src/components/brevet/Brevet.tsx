@@ -1,35 +1,11 @@
 import Image from "next/image";
-import { Inter, Newsreader } from "next/font/google";
-import { profile } from "@content/profile";
+import { homeProjects, type BrevetCopy } from "@content/home";
+import { mailto, profile } from "@content/profile";
 import { repoUrl } from "@content/site";
-import { mailto, mockProjects } from "../shared";
-import type { BrevetCopy } from "./copy";
 import { LazyDemo } from "./LazyDemo";
+import { brevetPaths } from "./meta";
 import { Seal } from "./Seal";
 import "./brevet.css";
-
-/*
- * Only what the page uses: Newsreader 400 for headings and results, Inter 400
- * and 600 for text. The heading font is preloaded, since the first screen is
- * set in it; the body font swaps in from a metric-matched fallback.
- */
-const serif = Newsreader({
-  subsets: ["latin"],
-  weight: "400",
-  style: "normal",
-  variable: "--b-serif",
-});
-const sans = Inter({
-  subsets: ["latin"],
-  weight: ["400", "600"],
-  variable: "--b-sans",
-  preload: false,
-});
-
-export const brevetPaths = {
-  sv: "/mockups/brevet",
-  en: "/mockups/brevet/en",
-} as const;
 
 /*
  * The envelope. The page is open by default: without JS or with reduced motion
@@ -65,15 +41,11 @@ E.forEach(function(e){addEventListener(e,open,{passive:true,capture:true})});
 
 export function Brevet({ copy: t }: { copy: BrevetCopy }) {
   const video = (slug: string) =>
-    mockProjects.find((p) => p.slug === slug)?.video;
+    homeProjects.find((p) => p.slug === slug)?.video;
 
   return (
     // The seal script adds classes to this element before hydration.
-    <div
-      lang={t.lang}
-      className={`bv ${serif.variable} ${sans.variable}`}
-      suppressHydrationWarning
-    >
+    <div className="bv" suppressHydrationWarning>
       <script dangerouslySetInnerHTML={{ __html: sealScript }} />
 
       <header className="bv-head">

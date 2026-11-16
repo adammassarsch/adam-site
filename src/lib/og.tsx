@@ -2,9 +2,10 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
 import { brand } from "./brand";
+import { ogSize } from "./metadata";
 import { printedDomain } from "./site-url";
 
-export const ogSize = { width: 1200, height: 630 };
+export { ogSize };
 
 const fontDir = join(process.cwd(), "assets/fonts");
 

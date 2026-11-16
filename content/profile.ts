@@ -60,6 +60,8 @@ export const profile = {
   ] satisfies Vital[],
 } as const;
 
+export const mailto = `mailto:${profile.links.email}`;
+
 /**
  * What goes between hero item `i` and the next one: "a and b", "a, b, and c".
  * The last item is followed by a full stop.

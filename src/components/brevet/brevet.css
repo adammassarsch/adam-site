@@ -1,7 +1,9 @@
-/* Mockup 1, Brevet: a calm letter on warm paper. Brick red only on results, links and the seal. */
+/* Brevet, the home page: a calm letter on warm paper. Brick red only on results, links and the seal. */
 
+/* The fonts are set on <html>, so the skip link outside .bv is in Inter too. */
 body:has(.bv) {
   background: #faf8f3;
+  font-family: var(--b-sans), system-ui, sans-serif;
 }
 
 .bv {

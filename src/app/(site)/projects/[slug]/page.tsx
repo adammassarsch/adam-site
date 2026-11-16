@@ -56,7 +56,7 @@ export default async function CasePage({ params }: PageProps<"/projects/[slug]">
     <>
       <Masthead />
       <div className="page">
-        <ReleaseRail items={railItems(false)} current={slug} />
+        <ReleaseRail items={railItems()} current={slug} />
 
         <main className="main" id="main">
           <article className="case" aria-labelledby="case-title">

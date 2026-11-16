@@ -4,18 +4,19 @@ import { profile } from "@content/profile";
 import { Footer, Masthead } from "@/components/SiteChrome";
 import "./not-found.css";
 
-export const metadata: Metadata = {
+export const notFoundMetadata: Metadata = {
   title: `Page not found · ${profile.name}`,
 };
 
-export default function NotFound() {
+/** The 404, for unknown URLs and for notFound() alike. */
+export function NotFound() {
   return (
     <>
       <Masthead />
       <main className="missing" id="main">
         <h1>This page doesn’t exist.</h1>
         <p>
-          It may have been moved or removed. <Link href="/#projects">Back to the projects</Link>
+          It may have been moved or removed. <Link href="/en#work">Back to the projects</Link>
         </p>
       </main>
       <Footer />

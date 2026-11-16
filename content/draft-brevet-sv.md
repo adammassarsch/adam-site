@@ -1,7 +1,7 @@
 # Brevet: all svensk text
 
 Översättning av befintlig engelsk text, inga nya påståenden. Källan i koden är
-`src/app/mockups/brevet/copy.ts`; ändra där.
+`content/home.ts`; ändra där.
 
 ## Meny och första skärmen
 

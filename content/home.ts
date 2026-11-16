@@ -1,17 +1,71 @@
-// Brevet's text in two languages. English is read from the site's content
-// files, so it never drifts. Swedish is a translation of the same text, with no
+// The home page (Brevet) in two languages. English is read from the site's
+// content files, so it never drifts; where it is shorter, the source field is
+// named next to the value. Swedish is a translation of the same text, with no
 // new claims; every Swedish string lives in this file and nowhere else.
 
 import { profile } from "@content/profile";
+import { projects } from "@content/projects";
 import { about, contact, howIBuild } from "@content/site";
-import { aboutFacts, headline, mockProjects } from "../shared";
 
 export type Lang = "sv" | "en";
+
+/** profile.hero.lead, without the list after the colon. */
+export const headline = "I build working AI software with Claude Code.";
+
+type HomeProject = {
+  slug: string;
+  title: string;
+  /** Shortest honest result: project.fact, cut. Absent when there is none. */
+  result?: string;
+  /** project.summary, cut to one sentence where it had two clauses. */
+  sentence: string;
+  /** Used where a project has no result: the rest of project.summary. */
+  description?: string;
+  video: { src: string; poster: string; label: string };
+};
+
+const byslug = (slug: string) => {
+  const p = projects.find((x) => x.slug === slug);
+  if (!p) throw new Error(`No project ${slug}`);
+  return p;
+};
+
+const seminar = byslug("seminar");
+const blueMesa = byslug("blue-mesa");
+const film = byslug("text-to-film");
+
+export const homeProjects: HomeProject[] = [
+  {
+    slug: seminar.slug,
+    title: seminar.title,
+    result: "$0.47 → $0.03 per question",
+    sentence: "A shared AI room where a study group uploads its material, asks one AI together and rehearses.",
+    video: seminar.video,
+  },
+  {
+    slug: blueMesa.slug,
+    title: blueMesa.title,
+    result: "Two paying customers",
+    sentence: "A prospecting service that finds companies with a reason to buy now, built on parallel AI agents.",
+    video: blueMesa.video,
+  },
+  {
+    slug: film.slug,
+    title: film.title,
+    sentence: "A Claude Code workflow that turns a company’s process page into a short explainer film.",
+    description: "Rendered in code from the page’s own words.",
+    video: film.video,
+  },
+];
+
+/** profile.vitals, moved into About, labels kept. */
+export const aboutFacts = profile.vitals.filter((v) => v.label !== "Looking for");
 
 type Link = { href: string; label: string };
 
 export type BrevetCopy = {
   lang: Lang;
+  skip: string;
   nav: { label: string; work: string; how: string; about: string };
   email: string;
   langLabel: string;
@@ -35,6 +89,7 @@ export type BrevetCopy = {
 
 const en: BrevetCopy = {
   lang: "en",
+  skip: "Skip to content",
   nav: { label: "Main", work: "Work", how: "How I build", about: "About" },
   email: contact.action,
   langLabel: "Language",
@@ -43,7 +98,7 @@ const en: BrevetCopy = {
   seeking: contact.text,
   workTitle: "Work",
   watchDemo: "Watch demo",
-  projects: mockProjects.map((p) => ({
+  projects: homeProjects.map((p) => ({
     slug: p.slug,
     title: p.title,
     result: p.result,
@@ -69,6 +124,7 @@ const docLink = (i: number) => en.how.principles[i]?.link?.href ?? "";
 
 const sv: BrevetCopy = {
   lang: "sv",
+  skip: "Hoppa till innehållet",
   nav: { label: "Huvudmeny", work: "Projekt", how: "Så bygger jag", about: "Om mig" },
   email: "Mejla mig",
   langLabel: "Språk",
