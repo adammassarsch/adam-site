@@ -45,8 +45,9 @@ const copy = {
   lanes: {
     check: "No rows lost.",
     caption: "Simulated run. The rows are made up and their outcomes are random.",
+    dare: "Try to lose a row: drag one out and let go.",
   },
-  gates: { go: "go", stopped: "Stop:" },
+  gates: { hold: "hold to go", stopped: "Stop:" },
   prompt: "email adam",
   more: "Read the case",
 } as const;

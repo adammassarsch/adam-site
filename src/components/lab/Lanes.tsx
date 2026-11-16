@@ -13,7 +13,7 @@ type Props = {
   /** What the drawing shows, for screen readers. */
   description: string;
   labels: { list: string; lanes: string; sheet: string };
-  copy: { check: string; caption: string; replay: string };
+  copy: { check: string; caption: string; dare: string; replay: string };
 };
 
 const LANES = 8;
@@ -21,7 +21,11 @@ const SEED = 1525;
 /** How the made-up rows fall into the four classes. An illustration, not a result. */
 const SHARE = [0.4, 0.26, 0.14, 0.2];
 /** Seconds: the list stands, rows travel to their lanes, the script writes, the check runs. */
-const T = { list: 0.6, travel: 0.6, gap: 0.3, write: 1.6, check: 0.8 };
+const T = { list: 0.6, travel: 0.6, gap: 0.3, write: 1.6, check: 0.8, fetch: 0.45 };
+/** A row the reader lets go of falls at this rate, in px/s². */
+const GRAVITY = 1600;
+/** How near a row a pointer has to be to take hold of it, in px. */
+const REACH = 6;
 
 type Row = { lane: number; slot: number; kind: number; at: number };
 type Model = { rows: Row[]; sizes: number[]; resolved: number; end: number };
@@ -188,6 +192,10 @@ const ease = (p: number) => 1 - (1 - p) ** 3;
  * four classes, a script writes the rows into the sheet, and a check compares
  * the two. The rows are simulated; the mechanism is the real one. No totals
  * are shown: a count of made-up rows would read as a result.
+ *
+ * The reader can try to lose a row: drag one out of a lane or the sheet and
+ * let go. It falls out of the picture, and the check runs again, finds it
+ * missing against the list and fetches it back before it reports.
  */
 export function Lanes({ min, max, classes, description, labels, copy }: Props) {
   const model = useMemo(() => buildModel(min, max), [min, max]);
@@ -211,6 +219,7 @@ export function Lanes({ min, max, classes, description, labels, copy }: Props) {
       agent: style.getPropertyValue("--agent").trim(),
       verified: style.getPropertyValue("--verified").trim(),
       tint: style.getPropertyValue("--tint").trim(),
+      ground: style.getPropertyValue("--ground").trim(),
     };
     const font = `11px ${style.fontFamily}`;
     const total = model.rows.length;
@@ -224,6 +233,30 @@ export function Lanes({ min, max, classes, description, labels, copy }: Props) {
     let last = 0;
     let frame = 0;
     let visible = false;
+
+    /** A row the reader has pulled out. It falls until the check fetches it back. */
+    type Loose = {
+      /** Taken from the sheet, not from its lane: that is where it goes back to. */
+      sheet: boolean;
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      w: number;
+      h: number;
+      held: boolean;
+      /** When the check started fetching it, and from where. Negative while it is still lost. */
+      back: number;
+      bx: number;
+      by: number;
+    };
+    const loose = new Map<number, Loose>();
+    // When the check sweeps the list. It sweeps again after every row that is thrown.
+    let sweepStart = checkStart;
+    let held = -1;
+    let grip = { x: 0, y: 0, t: 0 };
+    const written = () => Math.floor(clamp((time - writeStart) / T.write) * total);
+    const finished = () => time >= model.end && time >= sweepStart + T.check && loose.size === 0;
 
     // Every finished row is a box in ink; what fills it is its class.
     const cell = ([x, y, w, h]: Box, kind: number) => {
@@ -256,8 +289,13 @@ export function Lanes({ min, max, classes, description, labels, copy }: Props) {
       }
 
       const writing = clamp((time - writeStart) / T.write);
-      const writtenRows = Math.floor(writing * total);
-      const checking = clamp((time - checkStart) / T.check);
+      const writtenRows = written();
+      const checking = clamp((time - sweepStart) / T.check);
+      // Where a pulled-out row was: an empty place, lightly marked.
+      const gap = ([x, y, w, h]: Box) => {
+        ctx.strokeStyle = color.tint;
+        ctx.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1);
+      };
       const working = new Set<number>();
 
       // The script: a prompt icon beside the sheet, filled in while it writes.
@@ -307,7 +345,9 @@ export function Lanes({ min, max, classes, description, labels, copy }: Props) {
             from[3] + (to[3] - from[3]) * p,
           );
         } else if (travel >= 1) {
-          if (time >= row.at) {
+          if (loose.has(i)) {
+            gap(to);
+          } else if (time >= row.at) {
             cell(to, row.kind);
           } else {
             // The first open row in a lane is the one its subagent is on.
@@ -319,12 +359,81 @@ export function Lanes({ min, max, classes, description, labels, copy }: Props) {
         }
 
         if (i < writtenRows) {
-          cell(out, row.kind);
+          if (loose.has(i)) gap(out);
+          else cell(out, row.kind);
         } else if (i === writtenRows && writing > 0) {
           ctx.fillStyle = color.ink;
           ctx.fillRect(out[0], out[1], out[2], out[3]);
         }
       });
+
+      // The rows that are out, drawn last so they pass over everything.
+      for (const [i, chip] of loose) {
+        const row = model.rows[i];
+        if (!row) continue;
+        const box: Box = [chip.x - chip.w / 2, chip.y - chip.h / 2, chip.w, chip.h];
+        ctx.fillStyle = time >= row.at ? color.ground : color.tint;
+        ctx.fillRect(box[0], box[1], box[2], box[3]);
+        if (time >= row.at) cell(box, row.kind);
+      }
+    };
+
+    /** Moves the rows that are out: falling, or on their way back once the check has reached them. */
+    const advance = (dt: number) => {
+      if (!layout) return;
+      // The check does not finish behind the reader's back: it waits for the hand to let go.
+      if (held >= 0) sweepStart = Math.max(sweepStart, time + T.gap);
+      const reached = clamp((time - sweepStart) / T.check) * total;
+      for (const [i, chip] of loose) {
+        if (chip.held) continue;
+        if (chip.back < 0) {
+          chip.vy += GRAVITY * dt;
+          chip.x += chip.vx * dt;
+          chip.y += chip.vy * dt;
+          if (time >= sweepStart && reached > i) {
+            // Found missing. It comes back in from wherever it left the picture.
+            chip.back = time;
+            chip.bx = Math.min(width + 30, Math.max(-30, chip.x));
+            chip.by = Math.min(height + 30, Math.max(-30, chip.y));
+          }
+          continue;
+        }
+        const home = (chip.sheet ? layout.sheet : layout.lane)[i];
+        const p = clamp((time - chip.back) / T.fetch);
+        if (!home || p >= 1) {
+          loose.delete(i);
+          continue;
+        }
+        chip.x = chip.bx + (home[0] + home[2] / 2 - chip.bx) * ease(p);
+        chip.y = chip.by + (home[1] + home[3] / 2 - chip.by) * ease(p);
+      }
+    };
+
+    /** The row under a point, if it is one the reader can take: in its lane, or written to the sheet. */
+    const rowAt = (x: number, y: number) => {
+      if (!layout) return null;
+      const writtenRows = written();
+      let found: { row: number; sheet: boolean; box: Box } | null = null;
+      let nearest = REACH * REACH;
+      const test = (row: number, sheet: boolean, box: Box | undefined) => {
+        if (!box) return;
+        const dx = Math.max(box[0] - x, 0, x - box[0] - box[2]);
+        const dy = Math.max(box[1] - y, 0, y - box[1] - box[3]);
+        if (dx * dx + dy * dy <= nearest) {
+          nearest = dx * dx + dy * dy;
+          found = { row, sheet, box };
+        }
+      };
+      model.rows.forEach((row, i) => {
+        if (loose.has(i)) return;
+        if (time - T.list - row.slot * 0.004 >= T.travel) test(i, false, layout?.lane[i]);
+        if (i < writtenRows) test(i, true, layout?.sheet[i]);
+      });
+      return found as { row: number; sheet: boolean; box: Box } | null;
+    };
+    const point = (event: PointerEvent): [number, number] => {
+      const box = el.getBoundingClientRect();
+      return [event.clientX - box.left, event.clientY - box.top];
     };
 
     const resize = () => {
@@ -339,10 +448,12 @@ export function Lanes({ min, max, classes, description, labels, copy }: Props) {
     };
 
     const step = (now: number) => {
-      time += Math.min((now - last) / 1000, 0.05);
+      const dt = Math.min((now - last) / 1000, 0.05);
+      time += dt;
       last = now;
+      advance(dt);
       paint();
-      if (time >= model.end) {
+      if (finished()) {
         frame = 0;
         root.dataset.run = "done";
         return;
@@ -350,7 +461,7 @@ export function Lanes({ min, max, classes, description, labels, copy }: Props) {
       frame = requestAnimationFrame(step);
     };
     const play = () => {
-      if (frame || reduce || !visible || document.hidden || time >= model.end) return;
+      if (frame || reduce || !visible || document.hidden || finished()) return;
       last = performance.now();
       frame = requestAnimationFrame(step);
     };
@@ -360,8 +471,72 @@ export function Lanes({ min, max, classes, description, labels, copy }: Props) {
     };
     const onVisibility = () => (document.hidden ? pause() : play());
 
+    const onDown = (event: PointerEvent) => {
+      if (reduce || !event.isPrimary || event.button !== 0 || held >= 0) return;
+      const [x, y] = point(event);
+      const hit = rowAt(x, y);
+      if (!hit) return;
+      el.setPointerCapture(event.pointerId);
+      loose.set(hit.row, {
+        sheet: hit.sheet,
+        x,
+        y,
+        vx: 0,
+        vy: 0,
+        w: hit.box[2],
+        h: hit.box[3],
+        held: true,
+        back: -1,
+        bx: 0,
+        by: 0,
+      });
+      held = hit.row;
+      grip = { x, y, t: event.timeStamp };
+      root.dataset.run = "running";
+      el.style.cursor = "grabbing";
+      play();
+    };
+    const onMove = (event: PointerEvent) => {
+      const [x, y] = point(event);
+      const chip = loose.get(held);
+      if (!chip) {
+        if (!reduce) el.style.cursor = rowAt(x, y) ? "grab" : "";
+        return;
+      }
+      // Speed is smoothed over the last few moves, so the throw follows the hand.
+      const dt = Math.max(1, event.timeStamp - grip.t) / 1000;
+      chip.vx = chip.vx * 0.6 + ((x - grip.x) / dt) * 0.4;
+      chip.vy = chip.vy * 0.6 + ((y - grip.y) / dt) * 0.4;
+      chip.x = x;
+      chip.y = y;
+      grip = { x, y, t: event.timeStamp };
+    };
+    const onUp = (event: PointerEvent) => {
+      const chip = loose.get(held);
+      held = -1;
+      el.style.cursor = "";
+      if (!chip) return;
+      chip.held = false;
+      // A cancelled touch is a scroll, not a throw: the row goes straight back.
+      if (event.type === "pointercancel") {
+        chip.back = time;
+        chip.bx = chip.x;
+        chip.by = chip.y;
+      }
+      const speed = Math.hypot(chip.vx, chip.vy);
+      if (speed > 2400) {
+        chip.vx *= 2400 / speed;
+        chip.vy *= 2400 / speed;
+      }
+      // The check runs again shortly after, unless its first run is still to come.
+      sweepStart = Math.max(sweepStart, time + 0.5);
+    };
+
     restart.current = () => {
       pause();
+      loose.clear();
+      held = -1;
+      sweepStart = checkStart;
       time = 0;
       root.dataset.run = "running";
       paint();
@@ -382,9 +557,17 @@ export function Lanes({ min, max, classes, description, labels, copy }: Props) {
     );
     watched.observe(el);
     document.addEventListener("visibilitychange", onVisibility);
+    el.addEventListener("pointerdown", onDown);
+    el.addEventListener("pointermove", onMove);
+    el.addEventListener("pointerup", onUp);
+    el.addEventListener("pointercancel", onUp);
 
     return () => {
       pause();
+      el.removeEventListener("pointerdown", onDown);
+      el.removeEventListener("pointermove", onMove);
+      el.removeEventListener("pointerup", onUp);
+      el.removeEventListener("pointercancel", onUp);
       resized.disconnect();
       watched.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
@@ -417,6 +600,7 @@ export function Lanes({ min, max, classes, description, labels, copy }: Props) {
           {copy.check}
         </p>
         <p className="lanes-caption">{copy.caption}</p>
+        <p className="lanes-dare">{copy.dare}</p>
         <button type="button" className="lanes-replay" onClick={() => restart.current()}>
           {copy.replay}
         </button>
