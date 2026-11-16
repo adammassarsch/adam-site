@@ -40,7 +40,7 @@ const copy = {
     note: "Blocks are not drawn to scale.",
   },
   lanes: {
-    check: "{n} rows in, {n} rows written. No rows lost.",
+    check: "No rows lost.",
     caption: "Simulated run. The rows are made up and their outcomes are random.",
   },
   gates: { go: "go", stopped: "Stop:" },

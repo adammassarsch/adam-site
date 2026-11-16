@@ -24,7 +24,7 @@ const SHARE = [0.4, 0.26, 0.14, 0.2];
 const T = { list: 0.6, travel: 0.6, gap: 0.3, write: 1.6, check: 0.8 };
 
 type Row = { lane: number; slot: number; kind: number; at: number };
-type Model = { rows: Row[]; sizes: number[]; counts: number[]; resolved: number; end: number };
+type Model = { rows: Row[]; sizes: number[]; resolved: number; end: number };
 type Box = readonly [x: number, y: number, w: number, h: number];
 type Mark = { text: string; x: number; y: number; align?: CanvasTextAlign };
 type Plan = { list: Box[]; lane: Box[]; sheet: Box[]; marks: Mark[]; icon: readonly [number, number] };
@@ -44,7 +44,6 @@ function buildModel(min: number, max: number): Model {
   const random = mulberry32(SEED);
   const rows: Row[] = [];
   const sizes: number[] = [];
-  const counts = SHARE.map(() => 0);
   let resolved = 0;
 
   for (let lane = 0; lane < LANES; lane++) {
@@ -64,13 +63,12 @@ function buildModel(min: number, max: number): Model {
         }
       }
       const at = T.list + T.travel + (slot + 1) * pace;
-      counts[kind] = (counts[kind] ?? 0) + 1;
       resolved = Math.max(resolved, at);
       rows.push({ lane, slot, kind, at });
     }
   }
 
-  return { rows, sizes, counts, resolved, end: resolved + T.gap + T.write + T.check };
+  return { rows, sizes, resolved, end: resolved + T.gap + T.write + T.check };
 }
 
 /** Narrow screens stack the three stages; the lanes become a vertical list. */
@@ -167,13 +165,13 @@ const ease = (p: number) => 1 - (1 - p) ** 3;
  * Blue Mesa's contact research as one canvas: the company list splits into
  * groups, one lane per subagent, all starting at once. Each row ends in one of
  * four classes, a script writes the rows into the sheet, and a check compares
- * the two. The rows are simulated; the mechanism is the real one.
+ * the two. The rows are simulated; the mechanism is the real one. No totals
+ * are shown: a count of made-up rows would read as a result.
  */
 export function Lanes({ min, max, classes, description, labels, copy }: Props) {
   const model = useMemo(() => buildModel(min, max), [min, max]);
   const figure = useRef<HTMLElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
-  const counters = useRef<Array<HTMLElement | null>>([]);
   const restart = useRef<() => void>(() => {});
 
   useEffect(() => {
@@ -203,7 +201,6 @@ export function Lanes({ min, max, classes, description, labels, copy }: Props) {
     let last = 0;
     let frame = 0;
     let visible = false;
-    const shown = classes.map(() => -1);
 
     const cell = ([x, y, w, h]: Box, kind: number) => {
       if (kind === 0) {
@@ -240,7 +237,6 @@ export function Lanes({ min, max, classes, description, labels, copy }: Props) {
       const writing = clamp((time - writeStart) / T.write);
       const writtenRows = Math.floor(writing * total);
       const checkedRows = Math.floor(clamp((time - checkStart) / T.check) * total);
-      const tally = classes.map(() => 0);
       const working = new Set<number>();
 
       // The script: a prompt icon beside the sheet, lit while it writes.
@@ -278,7 +274,6 @@ export function Lanes({ min, max, classes, description, labels, copy }: Props) {
         } else if (travel >= 1) {
           if (time >= row.at) {
             cell(to, row.kind);
-            tally[row.kind] = (tally[row.kind] ?? 0) + 1;
           } else {
             ctx.fillStyle = color.faint;
             ctx.fillRect(to[0], to[1], to[2], to[3]);
@@ -297,13 +292,6 @@ export function Lanes({ min, max, classes, description, labels, copy }: Props) {
           ctx.fillStyle = color.ink;
           ctx.fillRect(out[0], out[1], out[2], out[3]);
         }
-      });
-
-      tally.forEach((count, kind) => {
-        if (shown[kind] === count) return;
-        shown[kind] = count;
-        const counter = counters.current[kind];
-        if (counter) counter.textContent = String(count);
       });
     };
 
@@ -370,9 +358,7 @@ export function Lanes({ min, max, classes, description, labels, copy }: Props) {
       restart.current = () => {};
       delete root.dataset.run;
     };
-  }, [model, max, classes, labels]);
-
-  const total = model.rows.length;
+  }, [model, max, labels]);
 
   return (
     <figure className="lanes lab-term" ref={figure}>
@@ -381,21 +367,13 @@ export function Lanes({ min, max, classes, description, labels, copy }: Props) {
         className="lanes-canvas"
         role="img"
         aria-label={description}
-        style={{ "--narrow": `${narrowHeight(total)}px` } as CSSProperties}
+        style={{ "--narrow": `${narrowHeight(model.rows.length)}px` } as CSSProperties}
       />
       <ul className="lanes-key">
         {classes.map((item, kind) => (
           <li key={item.label} data-kind={kind}>
             <span className="lanes-swatch" aria-hidden="true" />
             <span className="lanes-label">{item.label}</span>
-            <span
-              className="lanes-count"
-              ref={(node) => {
-                counters.current[kind] = node;
-              }}
-            >
-              {model.counts[kind] ?? 0}
-            </span>
             {item.note && <span className="lanes-note">{item.note}</span>}
           </li>
         ))}
@@ -403,7 +381,7 @@ export function Lanes({ min, max, classes, description, labels, copy }: Props) {
       <figcaption className="lanes-foot">
         <p className="lanes-check">
           <span aria-hidden="true">✓ </span>
-          {copy.check.replaceAll("{n}", String(total))}
+          {copy.check}
         </p>
         <p className="lanes-caption">{copy.caption}</p>
         <button type="button" className="lanes-replay" onClick={() => restart.current()}>
