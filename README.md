@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/adammassarsch/adam-site/actions/workflows/ci.yml/badge.svg)](https://github.com/adammassarsch/adam-site/actions/workflows/ci.yml)
 
-Source for Adam Massarsch's portfolio, live at [adam-site-eight.vercel.app](https://adam-site-eight.vercel.app).
+Source for Adam Massarsch's portfolio, live at [www.adammassarsch.se](https://www.adammassarsch.se).
 
 ## Stack
 

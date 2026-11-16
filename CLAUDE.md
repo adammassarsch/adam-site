@@ -1,6 +1,6 @@
 # adam-site
 
-Adam Massarsch's portfolio at `adam.bluemesa.se`. Audience: AI companies and recruiters.
+Adam Massarsch's portfolio at `www.adammassarsch.se`. Audience: AI companies and recruiters.
 The site and this repo are themselves a work sample. Sloppiness here costs more than anywhere else.
 
 The build plan lives in `PLAN.md`, a local file that is not committed and may be missing.

@@ -22,7 +22,7 @@ The site proves rather than claims. Every claim is backed by a demo, a link or t
 
 - Visitors arrive from a link in a message, email or LinkedIn, so the link preview (Open Graph image and text) is part of the first impression
 - Visitors who are engineers may open the GitHub repo and read README, CLAUDE.md and `.claude/` after the site
-- Hosted at `adam.bluemesa.se`, a subdomain of Blue Mesa, Adam's prospecting service. The site is Adam's personal site, not a Blue Mesa page
+- Hosted at `www.adammassarsch.se`, Adam's own domain; `adammassarsch.se` redirects there
 
 ## Capabilities and Constraints
 

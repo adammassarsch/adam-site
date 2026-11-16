@@ -5,13 +5,9 @@ import { siteUrl } from "./site-url";
 
 export const ogSize = { width: 1200, height: 630 };
 
-/**
- * The site card, app/opengraph-image.tsx. A metadata file only reaches the
- * segments below it, and every page sits under its own root layout, so the
- * pages that use the card name it here. Case pages have their own.
- */
+/** The site card, app/og.png/route.tsx. Case pages have their own. */
 export const ogImage = {
-  url: "/opengraph-image",
+  url: "/og.png",
   ...ogSize,
   alt: heroSentence(),
   type: "image/png",
