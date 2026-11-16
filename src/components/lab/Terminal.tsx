@@ -15,6 +15,7 @@ export type Scene = { id: string; label: string };
 type Props = {
   name: string;
   title: string;
+  /** The first scene is the top of the page; its id sits on the hero. */
   scenes: readonly Scene[];
   log: readonly LogLine[];
   replayLabel: string;
@@ -24,19 +25,20 @@ const CHARS_PER_SECOND = 80;
 /** The most characters one frame may type, so a slow frame never dumps a line. */
 const FRAME_BUDGET = 2;
 const HOLD_MS = 600;
-const FOLD_MS = 450;
+/** Matches the lab-tear animation in lab.css. */
+const TEAR_MS = 720;
 const MODIFIERS = new Set(["Shift", "Control", "Alt", "Meta"]);
+/** How far down the screen the reading line sits. */
+const READING_LINE = 0.34;
 
 /**
  * The status line pinned to the top of /lab, and the boot log under it.
  *
- * The server prints the finished session. After hydration, and only when
- * motion is allowed and the reader is at the top of the page, the log is
- * wiped and typed again, then folds up into the status line.
- *
- * The fold moves no layout while it runs: the log is clipped and the page
- * below is translated up by the log's height. On the last frame the log is
- * removed and the translation dropped together, so nothing shifts.
+ * The server prints the finished session as a block above the page. Where
+ * scripting and motion are both allowed, lab.css lifts that block into a
+ * sheet lying over the page, and this component types the log onto it and
+ * then tears the sheet away. The page under it never moves: the hero is
+ * already in place when the sheet falls.
  */
 export function Terminal({ name, title, scenes, log, replayLabel }: Props) {
   const boot = useRef<HTMLElement>(null);
@@ -51,6 +53,12 @@ export function Terminal({ name, title, scenes, log, replayLabel }: Props) {
 
     // Scenes below wait for this before they hold anything back for animation.
     root.dataset.live = "";
+    const unlive = () => {
+      delete root.dataset.live;
+    };
+
+    // Only where the stylesheet made the log a sheet over the page is there anything to tear.
+    if (getComputedStyle(section).position !== "fixed") return unlive;
 
     const segments = Array.from(section.querySelectorAll<HTMLElement>("[data-seg]"));
     const full = segments.map((el) => el.textContent ?? "");
@@ -66,22 +74,17 @@ export function Terminal({ name, title, scenes, log, replayLabel }: Props) {
     };
 
     const onScroll = () => {
-      if (window.scrollY > 0) fold();
+      if (window.scrollY > 0) tear();
     };
     const onKey = (event: KeyboardEvent) => {
-      if (!MODIFIERS.has(event.key)) fold();
-    };
-    // A jump to a scene is measured against the folded page, so fold at once.
-    const onClick = (event: MouseEvent) => {
-      if (event.target instanceof Element && event.target.closest('a[href^="#"]')) finish();
+      if (!MODIFIERS.has(event.key)) tear();
     };
     const triggers: ReadonlyArray<[string, EventListener, AddEventListenerOptions]> = [
       ["scroll", onScroll, { passive: true }],
-      ["wheel", fold, { passive: true }],
-      ["touchmove", fold, { passive: true }],
-      ["pointerdown", fold, {}],
+      ["wheel", tear, { passive: true }],
+      ["touchmove", tear, { passive: true }],
+      ["pointerdown", tear, {}],
       ["keydown", onKey as EventListener, {}],
-      ["click", onClick as EventListener, { capture: true }],
     ];
     const listen = (on: boolean) => {
       for (const [type, handler, options] of triggers) {
@@ -100,16 +103,15 @@ export function Terminal({ name, title, scenes, log, replayLabel }: Props) {
       listen(false);
       print();
       root!.dataset.boot = "done";
-      root!.style.removeProperty("--fold");
     }
 
-    function fold() {
+    function tear() {
       if (root!.dataset.boot !== "typing") return;
       halt();
+      listen(false);
       print();
-      root!.style.setProperty("--fold", `${-section!.offsetHeight}px`);
-      root!.dataset.boot = "folding";
-      timer = window.setTimeout(finish, FOLD_MS + 30);
+      root!.dataset.boot = "tearing";
+      timer = window.setTimeout(finish, TEAR_MS + 30);
     }
 
     const play = () => {
@@ -157,7 +159,7 @@ export function Terminal({ name, title, scenes, log, replayLabel }: Props) {
         }
 
         if (index < segments.length) frame = requestAnimationFrame(tick);
-        else timer = window.setTimeout(fold, HOLD_MS);
+        else timer = window.setTimeout(tear, HOLD_MS);
       };
 
       listen(true);
@@ -170,37 +172,46 @@ export function Terminal({ name, title, scenes, log, replayLabel }: Props) {
       play();
     };
 
-    // Arriving mid-page (a scene link, a restored scroll position): the log
-    // stays printed, because a fold would move what the reader is looking at.
+    // Arriving mid-page (a scene link, a restored scroll position): no sheet,
+    // the reader is already looking at the page.
     if (window.scrollY === 0 && !window.location.hash) play();
+    else root.dataset.boot = "done";
 
     return () => {
       halt();
       listen(false);
       print();
       delete root.dataset.boot;
-      delete root.dataset.live;
-      root.style.removeProperty("--fold");
+      unlive();
       replay.current = () => {};
     };
   }, []);
 
   useEffect(() => {
-    const nodes = scenes
-      .map((scene) => document.getElementById(scene.id))
-      .filter((el): el is HTMLElement => el !== null);
+    const nodes = scenes.map((scene) => document.getElementById(scene.id));
+    let frame = 0;
 
-    // The current scene is the one crossing a reading line a third down the screen.
-    const reading = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          const i = nodes.indexOf(entry.target as HTMLElement);
-          if (entry.isIntersecting && i >= 0) setCurrent(i);
-        }
-      },
-      { rootMargin: "-34% 0px -65% 0px" },
-    );
-    nodes.forEach((node) => reading.observe(node));
+    // The current scene is the last one whose top has passed the reading line.
+    // Measured from the scroll position, so it is right in both directions.
+    const measure = () => {
+      frame = 0;
+      const line = window.innerHeight * READING_LINE;
+      let now = 0;
+      nodes.forEach((node, i) => {
+        if (node && node.getBoundingClientRect().top <= line) now = i;
+      });
+      const page = document.documentElement;
+      if (window.scrollY > 0 && window.innerHeight + window.scrollY >= page.scrollHeight - 2) {
+        now = nodes.length - 1;
+      }
+      setCurrent(now);
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(measure);
+    };
+    schedule();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
 
     // One-shot effects further down start when their block is first seen.
     const seen = new IntersectionObserver(
@@ -216,14 +227,16 @@ export function Terminal({ name, title, scenes, log, replayLabel }: Props) {
     document.querySelectorAll(".lab [data-watch]").forEach((node) => seen.observe(node));
 
     return () => {
-      reading.disconnect();
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
       seen.disconnect();
     };
   }, [scenes]);
 
   return (
     <>
-      <header className="lab-status lab-term">
+      <header className="lab-status lab-ink">
         <Link className="lab-status-name" href="/">
           {name}
         </Link>
@@ -246,18 +259,20 @@ export function Terminal({ name, title, scenes, log, replayLabel }: Props) {
         <span className="lab-progress" aria-hidden="true" />
       </header>
 
-      <section className="lab-boot lab-term" id={scenes[0]?.id} ref={boot} aria-label={scenes[0]?.label}>
-        <ol className="lab-log">
-          {log.map((line, i) => (
-            <li key={i}>
-              {line.map((segment, j) => (
-                <span key={j} data-seg="" data-tone={segment.tone} data-pause={segment.pause}>
-                  {segment.text}
-                </span>
-              ))}
-            </li>
-          ))}
-        </ol>
+      <section className="lab-boot" ref={boot} aria-label={scenes[0]?.label}>
+        <div className="lab-sheet lab-ink">
+          <ol className="lab-log">
+            {log.map((line, i) => (
+              <li key={i}>
+                {line.map((segment, j) => (
+                  <span key={j} data-seg="" data-tone={segment.tone} data-pause={segment.pause}>
+                    {segment.text}
+                  </span>
+                ))}
+              </li>
+            ))}
+          </ol>
+        </div>
       </section>
     </>
   );

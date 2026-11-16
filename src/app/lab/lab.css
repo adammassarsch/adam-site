@@ -1,49 +1,97 @@
 /*
- * /lab: Session Replay. The tokens are the site's own (globals.css). What this
- * page adds:
- *   - a terminal surface that is dark in both themes, built from the existing
- *     dark-mode tokens
- *   - the system monospace for terminal text, so no font is downloaded
- *   - one accent, --warm, used only for the warm prompt cache
- * The highlighter keeps its meaning: it marks what was verified.
+ * /lab: Session Replay, printed in the Riso Lab palette: cream paper, one ink
+ * and five spot colours. Every colour has exactly one meaning and is used for
+ * nothing else:
+ *
+ *   --ground     the page
+ *   --ink        text and every drawn line; as a surface, the terminal
+ *   --agent      an AI agent at work
+ *   --human      a person deciding: the stops, and go
+ *   --verified   a measured or checked fact (always a fill under ink)
+ *   --cached     read from the prompt cache
+ *   --simulated  made up for illustration
+ *   --tint       ink at 14 % on the paper: structure only, never information
+ *
+ * The page is the same in light and dark mode, like a printed sheet. There is
+ * no grey for secondary text: grey means simulated, so hierarchy comes from
+ * size and weight.
  *
  * Everything is printed in its final state by default. A state that holds
  * something back for animation only applies under .lab[data-live], which the
  * terminal sets after hydration when motion is allowed.
  */
 
+/* The site's own tokens, re-inked, so the body and the footer print on the
+   same paper. Scoped with :has() because this sheet stays loaded after a
+   client-side navigation away from /lab. */
+:root:has(.lab) {
+  --ground: #fff7e8;
+  --ink: #1d1b2e;
+  --mute: #1d1b2e;
+  --rule: #1d1b2e;
+  --faint: #dfd8ce;
+  --frame: #1d1b2e;
+  --mark: #ffd83d;
+  --mark-ink: #1d1b2e;
+  color-scheme: light;
+}
+
+:root:has(.lab) ::selection {
+  background: var(--ink);
+  color: var(--ground);
+}
+
 .lab {
-  --term: oklch(19% 0.006 140);
-  --term-ink: oklch(94% 0.004 130);
-  --term-mute: oklch(72% 0.008 140);
-  --term-faint: oklch(30% 0.006 140);
-  --warm: oklch(74% 0.16 52);
+  --ground: #fff7e8;
+  --ink: #1d1b2e;
+  --agent: #2447e6;
+  --human: #c81b78;
+  --verified: #ffd83d;
+  --cached: #0a7d52;
+  --simulated: #6c687a;
+  --tint: #dfd8ce;
+
+  --mute: var(--ink);
+  --rule: var(--ink);
+  --faint: var(--tint);
+  --frame: var(--ink);
+  --mark: var(--verified);
+  --mark-ink: var(--ink);
+
   --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
   --bar: 2.75rem;
+  /* The tear: one ragged line, shared by the stub left under the status line
+     and the top edge of the sheet that comes away, so the two fit. */
+  --tear:
+    0% 8px, 3% 4px, 6% 9px, 9% 5px, 13% 10px, 16% 6px, 19% 11px, 23% 5px, 27% 9px, 30% 4px, 34% 8px, 38% 12px,
+    41% 6px, 45% 10px, 49% 5px, 53% 9px, 56% 4px, 60% 8px, 64% 11px, 68% 6px, 71% 10px, 75% 5px, 79% 9px,
+    83% 4px, 87% 10px, 91% 6px, 95% 11px, 98% 7px, 100% 9px;
 
   flex: 1 0 auto;
-  /* The fold swaps a transform for layout in one frame; the browser must not re-anchor the scroll. */
-  overflow-anchor: none;
+  background: var(--ground);
+  color: var(--ink);
 }
 
-@media (prefers-color-scheme: dark) {
-  .lab {
-    --term: oklch(11% 0.006 140);
-  }
-}
-
+/* Machine text on paper. */
 .lab-term {
-  background: var(--term);
-  color: var(--term-ink);
+  background: var(--ground);
+  color: var(--ink);
   font-family: var(--mono);
 }
 
-.lab-term :focus-visible,
-.lab-term:focus-visible {
-  outline-color: var(--term-ink);
+/* The terminal: the same two colours, reversed. */
+.lab-ink {
+  background: var(--ink);
+  color: var(--ground);
+  font-family: var(--mono);
 }
 
-/* Status line: the terminal, folded. Pinned for the whole page. */
+.lab-ink :focus-visible,
+.lab-ink:focus-visible {
+  outline-color: var(--ground);
+}
+
+/* Status line: what is left of the terminal. Pinned for the whole page. */
 
 .lab-status {
   position: sticky;
@@ -54,9 +102,20 @@
   gap: 0.75rem;
   height: var(--bar);
   padding-inline: var(--gutter);
-  border-bottom: 1px solid var(--term-faint);
   font-size: 0.8125rem;
   white-space: nowrap;
+}
+
+/* The stub of the torn sheet. */
+.lab-status::after {
+  content: "";
+  position: absolute;
+  inset: 100% 0 auto;
+  height: 12px;
+  margin-top: -1px;
+  background: var(--ink);
+  clip-path: polygon(var(--tear), 100% 0, 0 0);
+  pointer-events: none;
 }
 
 .lab-status-name {
@@ -65,10 +124,6 @@
   font-weight: 700;
   text-decoration: none;
   text-overflow: ellipsis;
-}
-
-.lab-status-title {
-  color: var(--term-mute);
 }
 
 .lab-scenes {
@@ -88,7 +143,6 @@
   gap: 0.5rem;
   height: var(--bar);
   padding-inline: 0.3rem;
-  color: var(--term-mute);
   text-decoration: none;
 }
 
@@ -103,23 +157,23 @@
   padding-right: 0.5rem;
 }
 
+/* Where the reader is: the number printed in reverse. */
 .lab-scenes a[aria-current] {
-  color: var(--term-ink);
+  font-weight: 700;
 }
 
 .lab-scenes a[aria-current] .lab-scene-n {
-  background: var(--mark);
-  color: var(--mark-ink);
-  font-weight: 700;
+  background: var(--ground);
+  color: var(--ink);
 }
 
 .lab-replay,
 .lanes-replay {
   display: none;
   padding: 0.2rem 0.6rem;
-  border: 1px solid var(--term-mute);
+  border: 1px solid currentColor;
   background: none;
-  color: var(--term-ink);
+  color: inherit;
   font: inherit;
   cursor: pointer;
   transition: transform 160ms var(--ease-out);
@@ -130,7 +184,6 @@
   transform: scale(0.97);
 }
 
-.lab[data-live] .lab-replay,
 .lab[data-live] .lanes-replay {
   display: block;
 }
@@ -138,9 +191,9 @@
 /* How far through the replay the reader is. Only where scroll timelines exist. */
 .lab-progress {
   position: absolute;
-  inset: auto 0 -1px;
+  inset: auto 0 0;
   height: 2px;
-  background: var(--mark);
+  background: var(--ground);
   transform-origin: 0 50%;
   transform: scaleX(0);
 }
@@ -185,20 +238,12 @@
   }
 }
 
-/* Scene 1: the boot log. Printed by default; typed and folded when live. */
+/* Scene 1: the boot log. Printed as a block above the page by default. */
 
-.lab-boot {
-  min-height: calc(100svh - var(--bar));
-  padding: clamp(1.25rem, 4vw, 3rem) var(--gutter) 3rem;
+.lab-sheet {
+  padding: clamp(1.75rem, 4vw, 3rem) var(--gutter) clamp(1.25rem, 4vw, 3rem);
   font-size: clamp(0.8125rem, 0.6rem + 0.9vw, 1.375rem);
   line-height: 1.7;
-}
-
-@media (prefers-reduced-motion: reduce), (scripting: none) {
-  .lab-boot {
-    min-height: 0;
-    padding-bottom: clamp(1.25rem, 4vw, 3rem);
-  }
 }
 
 .lab-log {
@@ -212,18 +257,10 @@
   overflow-wrap: anywhere;
 }
 
-.lab-log [data-tone="mute"] {
-  color: var(--term-mute);
-}
-
-.lab-log [data-tone="ok"] {
-  color: var(--mark);
-}
-
+/* The stop is the human's: the one colour in the log. */
 .lab-log [data-tone="stop"]:not(:empty) {
   padding: 0.1em 0.5ch;
-  background: var(--mark);
-  color: var(--mark-ink);
+  background: var(--human);
   font-weight: 700;
 }
 
@@ -234,7 +271,7 @@
   height: 1.15em;
   margin-left: 0.25ch;
   vertical-align: text-bottom;
-  background: var(--term-ink);
+  background: var(--ground);
   animation: lab-blink 1s steps(2, jump-none) infinite;
 }
 
@@ -244,32 +281,81 @@
   }
 }
 
-.lab[data-boot="typing"] .lab-boot {
-  clip-path: inset(0 0 0 0);
+/*
+ * With scripting and motion, the log is a sheet lying over the page, typed on
+ * and then torn off. The page under it is already laid out, so nothing moves
+ * when the sheet goes. Decided here and not in script, so the first paint is
+ * already the sheet and hydration shifts no layout.
+ */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  .lab-replay {
+    display: block;
+  }
+
+  .lab-boot {
+    position: fixed;
+    inset: var(--bar) 0 0;
+    z-index: 4;
+    transform-origin: 100% 0;
+  }
+
+  .lab-sheet {
+    height: 100%;
+  }
+
+  /* Until the script starts typing the sheet is blank, not a finished log. */
+  .lab:not([data-boot]) .lab-log {
+    visibility: hidden;
+  }
+
+  /* If the script never arrives, the sheet must not stay over the page. */
+  .lab:not([data-boot]) .lab-boot {
+    animation: lab-gone 1ms 8s forwards;
+  }
+
+  /* Pulled from the left: the sheet swings on its right corner, then drops. */
+  .lab[data-boot="tearing"] .lab-boot {
+    animation: lab-tear 720ms both;
+    filter: drop-shadow(0 0.75rem 1.5rem rgb(29 27 46 / 0.3));
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  /* The ragged edge is cut only as the sheet leaves; until then it is whole under the stub. */
+  .lab[data-boot="tearing"] .lab-sheet {
+    clip-path: polygon(var(--tear), 100% 100%, 0 100%);
+  }
+
+  .lab[data-boot="done"] .lab-boot {
+    display: none;
+  }
+
+  .lab[data-boot="tearing"] .lab-hero,
+  .lab[data-boot="done"] .lab-hero {
+    animation: lab-land 700ms var(--ease-out) both;
+  }
 }
 
-.lab[data-boot="folding"] .lab-boot {
-  clip-path: inset(0 0 100% 0);
-  transition: clip-path 450ms var(--ease-out);
+@keyframes lab-gone {
+  to {
+    visibility: hidden;
+  }
 }
 
-.lab[data-boot="folding"] .lab-log {
-  transform: translateY(-3rem);
-  transition: transform 450ms var(--ease-out);
-}
+@keyframes lab-tear {
+  0% {
+    transform: none;
+    animation-timing-function: var(--ease-out);
+  }
 
-.lab[data-boot="folding"] .lab-main {
-  transform: translateY(var(--fold, 0));
-  transition: transform 450ms var(--ease-out);
-}
+  24% {
+    transform: rotate(-2.5deg);
+    animation-timing-function: cubic-bezier(0.55, 0, 0.9, 0.45);
+  }
 
-.lab[data-boot="done"] .lab-boot {
-  display: none;
-}
-
-.lab[data-boot="folding"] .lab-hero,
-.lab[data-boot="done"] .lab-hero {
-  animation: lab-land 700ms var(--ease-out) both;
+  100% {
+    transform: translate3d(-3vw, 118vh, 0) rotate(-11deg);
+  }
 }
 
 @keyframes lab-land {
@@ -285,6 +371,8 @@
 }
 
 .lab-hero {
+  /* "1" in the status line lands here: far enough to scroll to the very top. */
+  scroll-margin-top: 100svh;
   max-width: 17em;
   margin-bottom: clamp(3rem, 8vw, 7rem);
   font-size: clamp(2rem, 1rem + 3.6vw, 5.25rem);
@@ -343,7 +431,6 @@
   font-size: 0.8125rem;
   font-weight: 400;
   letter-spacing: 0;
-  color: var(--mute);
 }
 
 .lab-lead {
@@ -355,10 +442,11 @@
   text-wrap: pretty;
 }
 
+/* The highlighter, printed slightly out of register like a second riso pass. */
 .lab-fact mark {
   padding: 0 0.15em;
-  background: linear-gradient(var(--mark), var(--mark)) no-repeat 0 0 / 100% 100%;
-  color: var(--mark-ink);
+  background: linear-gradient(var(--verified), var(--verified)) no-repeat 0.14em 0.14em / 100% 100%;
+  color: var(--ink);
   font-weight: 700;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
@@ -403,7 +491,6 @@
   font-size: 1.0625rem;
   font-weight: 500;
   letter-spacing: 0;
-  color: var(--mute);
 }
 
 .lab-more a {
@@ -416,7 +503,6 @@
   display: grid;
   gap: 0.4rem;
   font-size: 0.9375rem;
-  color: var(--mute);
 }
 
 .lab-bars div {
@@ -475,8 +561,8 @@
 }
 
 .lab-ticks li[data-passed] {
-  background: var(--mark);
-  color: var(--mark-ink);
+  background: var(--verified);
+  color: var(--ink);
 }
 
 .lab-ticks li[data-passed]::after {
@@ -498,7 +584,7 @@
   gap: 1.75rem clamp(1.5rem, 4vw, 3.5rem);
   margin: 0;
   padding: clamp(1rem, 3vw, 2rem);
-  border: 1px solid var(--frame);
+  border: 1px solid var(--ink);
   font-size: 0.8125rem;
   line-height: 1.45;
 }
@@ -519,11 +605,7 @@
 }
 
 .ledger[data-cache="warm"] .ledger-figure {
-  color: var(--warm);
-}
-
-.ledger-per {
-  color: var(--term-mute);
+  color: var(--cached);
 }
 
 .ledger-state {
@@ -536,14 +618,14 @@
 
 .ledger-chip {
   padding: 0.05rem 0.6ch;
-  border: 1px solid var(--term-ink);
+  border: 1px solid var(--ink);
   font-weight: 700;
 }
 
 .ledger[data-cache="warm"] .ledger-chip {
-  border-color: var(--warm);
-  background: var(--warm);
-  color: var(--term);
+  border-color: var(--cached);
+  background: var(--cached);
+  color: var(--ground);
 }
 
 .ledger-scrub {
@@ -552,12 +634,7 @@
   align-content: end;
 }
 
-.ledger-scrub label {
-  color: var(--term-mute);
-}
-
 .ledger-scrub output {
-  color: var(--term-ink);
   font-weight: 700;
 }
 
@@ -568,14 +645,15 @@
 
   position: relative;
   height: 8rem;
-  border-bottom: 1px solid var(--term-mute);
+  border-bottom: 1px solid var(--ink);
 }
 
+/* The warm hour, as a halftone of the cache colour. */
 .ledger-window {
   position: absolute;
   inset: 0 calc(var(--thumb) / 2) 0 50%;
-  border-left: 1px dashed var(--warm);
-  background: color-mix(in oklch, var(--warm) 16%, transparent);
+  border-left: 1px dashed var(--cached);
+  background: radial-gradient(var(--cached) 0.0625rem, transparent 0.09375rem) 0 0 / 0.4375rem 0.4375rem;
 }
 
 .ledger-step {
@@ -586,13 +664,14 @@
   height: var(--chart);
   overflow: visible;
   fill: none;
-  stroke: var(--term-ink);
+  stroke: var(--ink);
   stroke-width: 2;
 }
 
 .ledger-level {
   position: absolute;
-  color: var(--term-mute);
+  padding-inline: 0.4ch;
+  background: var(--ground);
 }
 
 .ledger-level[data-side="cold"] {
@@ -612,7 +691,7 @@
   bottom: 0;
   left: calc(var(--thumb) / 2 + (100% - var(--thumb)) * var(--at));
   width: 0;
-  border-left: 1px solid var(--term-ink);
+  border-left: 1px solid var(--ink);
   pointer-events: none;
 }
 
@@ -624,11 +703,11 @@
   width: 0.8125rem;
   height: 0.8125rem;
   margin-top: -0.40625rem;
-  background: var(--term-ink);
+  background: var(--ink);
 }
 
 .ledger[data-cache="warm"] .ledger-handle::before {
-  background: var(--warm);
+  background: var(--cached);
 }
 
 .ledger-handle::after {
@@ -638,7 +717,7 @@
   left: -0.6875rem;
   width: 1.3125rem;
   height: 0.5rem;
-  background: var(--term-ink);
+  background: var(--ink);
 }
 
 /* The native range is the whole axis: keyboard, touch and pointer for free. */
@@ -684,7 +763,6 @@
   display: flex;
   justify-content: space-between;
   padding-inline: calc(var(--thumb, 2.75rem) / 2 - 0.5rem);
-  color: var(--term-mute);
 }
 
 .ledger-prompt {
@@ -703,7 +781,7 @@
 
 .ledger-stack li {
   padding: 0.55rem 0.75rem;
-  border: 1px solid var(--term-mute);
+  border: 1px solid var(--ink);
 }
 
 .ledger-stack li[data-large] {
@@ -711,9 +789,9 @@
 }
 
 .ledger[data-cache="warm"] .ledger-stack li[data-cached] {
-  border-color: var(--warm);
-  background: var(--warm);
-  color: var(--term);
+  border-color: var(--cached);
+  background: var(--cached);
+  color: var(--ground);
 }
 
 .ledger-stack li.ledger-break {
@@ -722,7 +800,6 @@
   gap: 0.75rem;
   padding: 0.15rem 0;
   border: 0;
-  color: var(--term-mute);
 }
 
 .ledger-break::after {
@@ -732,11 +809,7 @@
 }
 
 .ledger[data-cache="warm"] .ledger-break {
-  color: var(--warm);
-}
-
-.ledger-note {
-  color: var(--term-mute);
+  color: var(--cached);
 }
 
 .ledger-rows {
@@ -747,8 +820,7 @@
 .ledger-rows th,
 .ledger-rows td {
   padding: 0.6rem 0;
-  border-top: 1px solid var(--term-faint);
-  color: var(--term-mute);
+  border-top: 1px solid var(--tint);
   font-weight: 400;
   text-align: left;
   vertical-align: baseline;
@@ -761,13 +833,13 @@
 .ledger-rows td {
   padding-left: 1rem;
   font-size: 1.0625rem;
-  font-weight: 700;
   text-align: right;
 }
 
+/* The row the handle is in is the one in bold. */
 .ledger-rows tr[data-active] th span:first-child,
 .ledger-rows tr[data-active] td {
-  color: var(--term-ink);
+  font-weight: 700;
 }
 
 .ledger-rows tr[data-active] th span:first-child::before {
@@ -802,9 +874,10 @@
 
 /* Scene 3: the lanes */
 
+/* The whole figure is a made-up run, so its frame is the simulated one. */
 .lanes {
   margin: 0;
-  border: 1px solid var(--frame);
+  border: 1px dashed var(--simulated);
   font-size: 0.8125rem;
   line-height: 1.45;
 }
@@ -822,7 +895,7 @@
   list-style: none;
   margin: 0;
   padding: 1rem clamp(0.875rem, 3vw, 1.5rem);
-  border-top: 1px solid var(--term-faint);
+  border-top: 1px solid var(--tint);
 }
 
 .lanes-key li {
@@ -839,26 +912,25 @@
   height: 1.125rem;
 }
 
+/* The same four boxes the canvas draws. */
+.lanes-swatch {
+  box-shadow: inset 0 0 0 1px var(--ink);
+}
+
 [data-kind="0"] > .lanes-swatch {
-  background: var(--mark);
+  background: var(--verified);
 }
 
 [data-kind="1"] > .lanes-swatch {
-  background: linear-gradient(to top, var(--mark) 45%, transparent 45%);
-  box-shadow: inset 0 0 0 1px var(--mark);
+  background: linear-gradient(to top, var(--verified) 45%, transparent 45%);
 }
 
 [data-kind="2"] > .lanes-swatch {
-  background: var(--term-mute);
-}
-
-[data-kind="3"] > .lanes-swatch {
-  box-shadow: inset 0 0 0 1px var(--term-mute);
+  background: var(--ink);
 }
 
 .lanes-note {
   grid-column: 2 / -1;
-  color: var(--term-mute);
 }
 
 .lanes-foot {
@@ -867,11 +939,7 @@
   align-items: center;
   gap: 0.5rem 1.5rem;
   padding: 0.875rem clamp(0.875rem, 3vw, 1.5rem);
-  border-top: 1px solid var(--term-faint);
-}
-
-.lanes-check span {
-  color: var(--mark);
+  border-top: 1px solid var(--tint);
 }
 
 .lanes[data-run="running"] .lanes-check {
@@ -879,7 +947,7 @@
 }
 
 .lanes-caption {
-  color: var(--term-mute);
+  color: var(--simulated);
 }
 
 .lanes-replay {
@@ -949,20 +1017,20 @@
 }
 
 .gates-said {
-  color: var(--mute);
   text-wrap: pretty;
 }
 
+/* A stop is where the human decides. */
 .gates-stopped {
-  color: var(--ink);
+  color: var(--human);
   font-weight: 700;
 }
 
 .gates-go {
   padding: 0.35rem 1.1rem;
   border: 0;
-  background: var(--mark);
-  color: var(--mark-ink);
+  background: var(--human);
+  color: var(--ground);
   font: inherit;
   font-weight: 700;
   cursor: pointer;
@@ -975,20 +1043,18 @@
 
 /* Live: a shut gate is a bar across the track; the phases behind it have not run. */
 .lab[data-live] .gates-phase[data-waiting] .gates-name {
-  color: var(--mute);
   font-weight: 400;
 }
 
 .lab[data-live] .gates-phase[data-waiting] .gates-n {
   background: var(--ground);
-  color: var(--mute);
-  box-shadow: inset 0 0 0 1px var(--mute);
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--ink);
 }
 
 .lab[data-live] .gates-phase[data-waiting]::before,
 .lab[data-live] .gates-phase:has(> [data-state="shut"])::before {
   border-left-style: dashed;
-  border-left-color: var(--mute);
 }
 
 .lab[data-live] .gates-gate[data-state="ahead"] {
@@ -1002,9 +1068,11 @@
   justify-content: space-between;
   gap: 0.5rem 1rem;
   margin-left: -2.75rem;
-  padding: 0.5rem 0.5rem 0.5rem 0.75rem;
-  background: var(--ink);
-  color: var(--ground);
+  padding: 0.375rem 0.375rem 0.375rem 0.625rem;
+  border: 2px solid var(--human);
+  background: var(--ground);
+  color: var(--human);
+  font-weight: 700;
 }
 
 .lab[data-live] .gates-gate[data-state="shut"] .gates-wait,
@@ -1016,16 +1084,12 @@
   display: none;
 }
 
-.lab[data-live] .gates-gate[data-state="shut"] :focus-visible {
-  outline-color: var(--ground);
-}
-
 /* The click: the bar snaps back into the track and the stop is left in its place. */
 .lab[data-live] .gates-gate[data-state="open"]::before {
   content: "";
   position: absolute;
   inset: -0.2rem 0 -0.2rem -2.75rem;
-  background: var(--ink);
+  background: var(--human);
   transform-origin: 0 50%;
   transform: scaleX(0);
   pointer-events: none;
@@ -1091,10 +1155,6 @@
   font-family: var(--font-grotesk), system-ui, sans-serif;
 }
 
-.lab-contact .lab-date {
-  color: var(--term-mute);
-}
-
 .lab-contact-text {
   max-width: var(--measure);
   font-family: var(--font-grotesk), system-ui, sans-serif;
@@ -1117,7 +1177,6 @@
 
 .lab-prompt a::before {
   content: "> ";
-  color: var(--mark);
 }
 
 .lab-prompt a::after {
@@ -1125,7 +1184,8 @@
   width: 0.6em;
   height: 1em;
   margin-left: 0.15em;
-  background: var(--mark);
+  /* The cursor waits for a person. */
+  background: var(--human);
 }
 
 .lab-prompt-text {

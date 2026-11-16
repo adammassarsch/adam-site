@@ -26,8 +26,16 @@ const T = { list: 0.6, travel: 0.6, gap: 0.3, write: 1.6, check: 0.8 };
 type Row = { lane: number; slot: number; kind: number; at: number };
 type Model = { rows: Row[]; sizes: number[]; resolved: number; end: number };
 type Box = readonly [x: number, y: number, w: number, h: number];
-type Mark = { text: string; x: number; y: number; align?: CanvasTextAlign };
-type Plan = { list: Box[]; lane: Box[]; sheet: Box[]; marks: Mark[]; icon: readonly [number, number] };
+type Mark = { text: string; x: number; y: number; align?: CanvasTextAlign; agent?: boolean };
+type Plan = {
+  list: Box[];
+  lane: Box[];
+  sheet: Box[];
+  marks: Mark[];
+  icon: readonly [number, number];
+  /** The rule the check draws along the list as it goes: its full extent, and the way it grows. */
+  check: { box: Box; down: boolean };
+};
 
 /** Small seeded generator, so the server, the client and every replay draw the same run. */
 function mulberry32(seed: number) {
@@ -122,13 +130,13 @@ function plan(width: number, height: number, wide: boolean, model: Model, max: n
     });
     model.sizes.forEach((size, l) => {
       const y = top + l * laneH + laneH / 2;
-      marks.push({ text: String(l + 1), x: laneX + 14, y, align: "right" });
+      marks.push({ text: String(l + 1), x: laneX + 14, y, align: "right", agent: true });
       marks.push({ text: String(size), x: laneX + 26 + size * cellW + 6, y });
     });
     marks.push({ text: labels.list, x: pad, y: 22 });
-    marks.push({ text: labels.lanes, x: laneX, y: 22 });
+    marks.push({ text: labels.lanes, x: laneX, y: 22, agent: true });
     marks.push({ text: labels.sheet, x: sheetX + 24, y: 22 });
-    return { list, lane, sheet, marks, icon: [sheetX, 15] };
+    return { list, lane, sheet, marks, icon: [sheetX, 15], check: { box: [pad - 8, top, 3, body], down: true } };
   }
 
   const n = NARROW;
@@ -150,12 +158,25 @@ function plan(width: number, height: number, wide: boolean, model: Model, max: n
     ]);
   });
   model.sizes.forEach((_, l) => {
-    marks.push({ text: String(l + 1), x: n.pad + 12, y: laneTop + l * n.lane + n.lane / 2, align: "right" });
+    marks.push({
+      text: String(l + 1),
+      x: n.pad + 12,
+      y: laneTop + l * n.lane + n.lane / 2,
+      align: "right",
+      agent: true,
+    });
   });
   marks.push({ text: labels.list, x: n.pad, y: n.top - 16 });
-  marks.push({ text: labels.lanes, x: n.pad, y: laneTop - 16 });
+  marks.push({ text: labels.lanes, x: n.pad, y: laneTop - 16, agent: true });
   marks.push({ text: labels.sheet, x: n.pad + 24, y: sheetTop - 16 });
-  return { list, lane, sheet, marks, icon: [n.pad, sheetTop - 23] };
+  return {
+    list,
+    lane,
+    sheet,
+    marks,
+    icon: [n.pad, sheetTop - 23],
+    check: { box: [n.pad, n.top - 6, inner, 2], down: false },
+  };
 }
 
 const clamp = (value: number) => Math.min(1, Math.max(0, value));
@@ -183,11 +204,13 @@ export function Lanes({ min, max, classes, description, labels, copy }: Props) {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const wideQuery = window.matchMedia("(min-width: 40rem)");
     const style = getComputedStyle(el);
+    // One meaning per colour, as in lab.css: ink draws, blue is an agent at
+    // work, yellow is a verified address, the tint is a row not reached yet.
     const color = {
-      ink: style.getPropertyValue("--term-ink").trim(),
-      mute: style.getPropertyValue("--term-mute").trim(),
-      faint: style.getPropertyValue("--term-faint").trim(),
-      mark: style.getPropertyValue("--mark").trim(),
+      ink: style.getPropertyValue("--ink").trim(),
+      agent: style.getPropertyValue("--agent").trim(),
+      verified: style.getPropertyValue("--verified").trim(),
+      tint: style.getPropertyValue("--tint").trim(),
     };
     const font = `11px ${style.fontFamily}`;
     const total = model.rows.length;
@@ -202,24 +225,22 @@ export function Lanes({ min, max, classes, description, labels, copy }: Props) {
     let frame = 0;
     let visible = false;
 
+    // Every finished row is a box in ink; what fills it is its class.
     const cell = ([x, y, w, h]: Box, kind: number) => {
       if (kind === 0) {
-        ctx.fillStyle = color.mark;
+        ctx.fillStyle = color.verified;
         ctx.fillRect(x, y, w, h);
       } else if (kind === 1) {
-        // Half a mark: derived from a proven pattern, not seen directly.
-        ctx.fillStyle = color.mark;
+        // Half filled: derived from a proven pattern, not seen directly.
+        ctx.fillStyle = color.verified;
         ctx.fillRect(x, y + h * 0.55, w, h * 0.45);
-        ctx.strokeStyle = color.mark;
-        ctx.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1);
       } else if (kind === 2) {
-        ctx.fillStyle = color.mute;
+        ctx.fillStyle = color.ink;
         ctx.fillRect(x, y, w, h);
-      } else {
-        // Not found: an empty, closed box. A finished answer, not a failure.
-        ctx.strokeStyle = color.mute;
-        ctx.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1);
       }
+      // Not found stays an empty, closed box. A finished answer, not a failure.
+      ctx.strokeStyle = color.ink;
+      ctx.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1);
     };
 
     const paint = () => {
@@ -228,20 +249,26 @@ export function Lanes({ min, max, classes, description, labels, copy }: Props) {
       ctx.lineWidth = 1;
       ctx.font = font;
       ctx.textBaseline = "middle";
-      ctx.fillStyle = color.mute;
       for (const mark of layout.marks) {
+        ctx.fillStyle = mark.agent ? color.agent : color.ink;
         ctx.textAlign = mark.align ?? "left";
         ctx.fillText(mark.text, mark.x, mark.y);
       }
 
       const writing = clamp((time - writeStart) / T.write);
       const writtenRows = Math.floor(writing * total);
-      const checkedRows = Math.floor(clamp((time - checkStart) / T.check) * total);
+      const checking = clamp((time - checkStart) / T.check);
       const working = new Set<number>();
 
-      // The script: a prompt icon beside the sheet, lit while it writes.
+      // The script: a prompt icon beside the sheet, filled in while it writes.
       const [ix, iy] = layout.icon;
-      ctx.strokeStyle = writing > 0 ? color.ink : color.mute;
+      const busy = writing > 0 && writing < 1;
+      ctx.strokeStyle = color.ink;
+      if (busy) {
+        ctx.fillStyle = color.ink;
+        ctx.fillRect(ix, iy, 17, 14);
+        ctx.strokeStyle = style.getPropertyValue("--ground").trim();
+      }
       ctx.strokeRect(ix + 0.5, iy + 0.5, 16, 13);
       ctx.beginPath();
       ctx.moveTo(ix + 4, iy + 4);
@@ -251,6 +278,14 @@ export function Lanes({ min, max, classes, description, labels, copy }: Props) {
       ctx.lineTo(ix + 13, iy + 10);
       ctx.stroke();
 
+      // The check: a rule drawn along the original list, row by row.
+      if (checking > 0) {
+        const [cx, cy, cw, ch] = layout.check.box;
+        ctx.fillStyle = color.ink;
+        if (layout.check.down) ctx.fillRect(cx, cy, cw, ch * checking);
+        else ctx.fillRect(cx, cy, cw * checking, ch);
+      }
+
       model.rows.forEach((row, i) => {
         const from = layout?.list[i];
         const to = layout?.lane[i];
@@ -258,13 +293,13 @@ export function Lanes({ min, max, classes, description, labels, copy }: Props) {
         if (!from || !to || !out) return;
 
         // The list stays where it is: it is the original the check compares against.
-        ctx.fillStyle = i < checkedRows ? color.ink : color.mute;
+        ctx.fillStyle = color.ink;
         ctx.fillRect(from[0], from[1], from[2], from[3]);
 
         const travel = clamp((time - T.list - row.slot * 0.004) / T.travel);
         if (travel > 0 && travel < 1) {
           const p = ease(travel);
-          ctx.fillStyle = color.faint;
+          ctx.fillStyle = color.tint;
           ctx.fillRect(
             from[0] + (to[0] - from[0]) * p,
             from[1] + (to[1] - from[1]) * p,
@@ -275,14 +310,11 @@ export function Lanes({ min, max, classes, description, labels, copy }: Props) {
           if (time >= row.at) {
             cell(to, row.kind);
           } else {
-            ctx.fillStyle = color.faint;
-            ctx.fillRect(to[0], to[1], to[2], to[3]);
             // The first open row in a lane is the one its subagent is on.
-            if (!working.has(row.lane)) {
-              working.add(row.lane);
-              ctx.strokeStyle = color.ink;
-              ctx.strokeRect(to[0] + 0.5, to[1] + 0.5, to[2] - 1, to[3] - 1);
-            }
+            const active = !working.has(row.lane);
+            if (active) working.add(row.lane);
+            ctx.fillStyle = active ? color.agent : color.tint;
+            ctx.fillRect(to[0], to[1], to[2], to[3]);
           }
         }
 

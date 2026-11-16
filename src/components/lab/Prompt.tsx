@@ -20,7 +20,7 @@ type Props = {
  */
 export function Prompt({ id, index, title, text, prompt, mailto, email, links }: Props) {
   return (
-    <section id={id} className="lab-contact lab-term" aria-labelledby={`${id}-title`} data-watch="">
+    <section id={id} className="lab-contact lab-ink" aria-labelledby={`${id}-title`} data-watch="">
       <h2 id={`${id}-title`}>
         <span className="lab-title">{title}</span>
         <span className="lab-date">{index}</span>

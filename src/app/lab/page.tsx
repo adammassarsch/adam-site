@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { heroJoiner, heroSentence, profile } from "@content/profile";
 import { projects } from "@content/projects";
 import { contact, howIBuild } from "@content/site";
@@ -138,7 +138,8 @@ const rowClasses = [
 ];
 
 const scenes: readonly Scene[] = [
-  { id: "boot", label: copy.boot },
+  // The boot sheet is torn away; what stays at the top of the page is the hero.
+  { id: "intro", label: copy.boot },
   { id: seminar.slug, label: seminar.title },
   { id: blueMesa.slug, label: blueMesa.title },
   { id: "how-i-build", label: howIBuild.title },
@@ -162,6 +163,9 @@ const log: readonly LogLine[] = [
   ],
   [{ text: copy.session.review }],
 ];
+
+/** The browser chrome continues the status line: Riso Lab ink (--ink in lab.css). */
+export const viewport: Viewport = { themeColor: "#1d1b2e" };
 
 export const metadata: Metadata = {
   title: `${copy.title} · ${profile.name}`,
@@ -205,11 +209,11 @@ export default function Lab() {
         <Terminal name={profile.name} title={copy.title} scenes={scenes} log={log} replayLabel={copy.replay} />
 
         <main className="lab-main" id="main">
-          <h1 className="lab-hero">
+          <h1 className="lab-hero" id={scenes[0]?.id}>
             {profile.hero.lead}{" "}
             {profile.hero.items.map((text, i) => (
               <span key={text}>
-                <a href={`#${projects[i]?.slug ?? "main"}`} style={{ "--i": i } as CSSProperties}>
+                <a href={`#${projects[i]?.slug ?? "main"}`}>
                   {text}
                 </a>
                 {heroJoiner(i)}
