@@ -43,11 +43,19 @@ export function Masthead({ onHome = false }: MastheadProps) {
   );
 }
 
-export function Footer() {
+type FooterProps = {
+  /** The link to /lab. Left out on /lab itself. */
+  lab?: boolean;
+};
+
+export function Footer({ lab = true }: FooterProps) {
   return (
     <footer className="foot">
       <p>{profile.name}</p>
-      <a href={repoUrl}>Source for this site</a>
+      <p className="foot-links">
+        {lab && <a href="/lab">Lab →</a>}
+        <a href={repoUrl}>Source for this site</a>
+      </p>
     </footer>
   );
 }

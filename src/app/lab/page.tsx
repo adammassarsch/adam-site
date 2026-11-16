@@ -396,7 +396,7 @@ export default function Lab() {
         </main>
       </div>
 
-      <Footer />
+      <Footer lab={false} />
     </>
   );
 }
