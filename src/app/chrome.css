@@ -237,7 +237,8 @@ body > .missing {
     position: static;
     grid-auto-flow: column;
     grid-auto-columns: max-content;
-    gap: 1.5rem;
+    /* Narrower gaps on phones keep all three projects on screen down to 360 px. */
+    gap: clamp(0.75rem, 4vw, 1.5rem);
   }
 
   .main {

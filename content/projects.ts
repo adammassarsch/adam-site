@@ -161,4 +161,48 @@ export const projects = [
       links: [{ label: "bluemesa.se (in Swedish)", href: "https://bluemesa.se" }],
     },
   },
+  {
+    slug: "text-to-film",
+    title: "Text → Film",
+    period: "Nov 2026",
+    summary:
+      "A Claude Code workflow that turns a company's process page into a short explainer film, rendered in code from the page's own words.",
+    tags: ["Claude Code", "Subagents", "Remotion", "Three.js", "Rapier"],
+    video: {
+      src: "/media/text-till-film-demo.mp4",
+      poster: "/media/text-till-film-demo-poster.jpg",
+      label:
+        "Showcase film for Text → Film, in Swedish: a company's process page is hit by a play button, its letters fall to the floor and become a conveyor line with four stations: inquiry, quote, production and delivery.",
+      caption: "Showcase film · 24 s · no sound · in Swedish",
+      durationSeconds: 24,
+    },
+    case: {
+      problem:
+        "Many small companies explain how they work as a paragraph on a “how it works” page. I wanted a way to turn that paragraph into a short film, built from the company's own words, without a camera or a video model.",
+      built: [
+        "Text → Film is a Claude Code skill with four subagents, written to go from a company's website to a finished film: an analysis of the site, a visual concept, a script, a written brief and a render in Remotion.",
+        "This 24-second film is the showcase. A generic process page is hit by a play button, the letters fall to the floor, and the same letters become a 3D conveyor line where a box passes four stations: inquiry, quote, production and delivery. It is made to be understood without sound.",
+        "The showcase did not run the whole skill. Fable proposed three style directions and I chose one; the rendering agent, on Opus, built the stills and the film.",
+      ],
+      stack:
+        "Remotion 4 and React, Three.js through @remotion/three, Rapier for physics, opentype.js for the letter shapes, ffmpeg, Claude Code with a skill and four subagents.",
+      decisions: [
+        {
+          title: "The text is the material.",
+          text: "Each of the over 200 letters on the page is its own rigid body, extruded from the Archivo font. The physics runs once in Rapier and is baked to a file before rendering, so every render of a frame is identical. After seven seconds the motion is directed along computed paths instead of simulated, so the four stations end up where the camera needs them.",
+        },
+        {
+          title: "The expensive model only where it makes a difference.",
+          text: "Fable does only the concept and the style. Sonnet does the site analysis and the frame checks, Opus writes the brief and renders. Every agent is pinned with model: in its file and in the call, so none of them inherits the main session's model. The rendering agent is capped at ten minutes and two rounds per style test. One client-style test render cost about 2 % of the weekly quota on the Max plan.",
+        },
+        {
+          title: "Agents with fixed roles and a testable ban list.",
+          text: "The main session writes the concept, the script and every word on screen, and never delegates them. No agent may change them. Facts about a company come only from its own site, each with a source URL; anything else goes on a “don't know” list and stays out of the film. The ban list gives each rule a test that can be run on a still, for example: cover the text, and if six frames from six scenes look like the same template, it is a slideshow.",
+        },
+      ],
+      hardest:
+        "Making it look like a film and not like rendered slides. The first client-style test render looked flat. While making this film I added two steps before any full render. First, three genuinely different style directions as single stills (cast lead type, cardboard, porcelain), so the look is chosen before anything moves. Then a motion test of the first seven seconds, with frames every 0.2 seconds around the key moments. Both steps were then written into the skill. The split that made it work: the model checks still frames against the brief and the ban list, and I judge the motion. Motion cannot be judged from single frames, so the skill now stops at the motion test and waits for me before the full render. This film went through three motion tests and four full versions.",
+      links: [{ label: "Demo video above" }],
+    },
+  },
 ] as const satisfies readonly Project[];

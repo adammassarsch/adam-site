@@ -7,11 +7,30 @@ export type Vital = {
   essential?: boolean;
 };
 
+/**
+ * One project named in the hero sentence. It links to the project's release
+ * on the page, or straight to its case page when `to` is "case".
+ */
+export type HeroItem = {
+  text: string;
+  slug: string;
+  to?: "case";
+};
+
+/** Where a hero item links: the release on the same page, or the case page. */
+export function heroHref(item: HeroItem): string {
+  return item.to === "case" ? `/projects/${item.slug}` : `#${item.slug}`;
+}
+
 export const profile = {
   name: "Adam Massarsch",
   hero: {
     lead: "I build working AI software with Claude Code:",
-    items: ["a real-time study app", "a prospecting engine with parallel agents"],
+    items: [
+      { text: "a real-time study app", slug: "seminar" },
+      { text: "a prospecting engine with parallel agents", slug: "blue-mesa" },
+      { text: "an agent pipeline that turns process pages into film", slug: "text-to-film", to: "case" },
+    ] satisfies HeroItem[],
   },
   links: {
     email: "adam.massarsch@gmail.com",
@@ -54,6 +73,6 @@ export function heroJoiner(i: number): string {
 
 /** The hero sentence as one string, for metadata and plain-text use. */
 export function heroSentence(): string {
-  const items = profile.hero.items.map((item, i) => item + heroJoiner(i)).join("");
+  const items = profile.hero.items.map((item, i) => item.text + heroJoiner(i)).join("");
   return `${profile.hero.lead} ${items}`;
 }

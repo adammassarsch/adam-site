@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from "react";
 import type { Metadata, Viewport } from "next";
-import { heroJoiner, heroSentence, profile } from "@content/profile";
+import { heroHref, heroJoiner, heroSentence, profile } from "@content/profile";
 import { projects } from "@content/projects";
 import { contact, howIBuild } from "@content/site";
 import { Footer } from "@/components/SiteChrome";
@@ -219,10 +219,10 @@ export default function Lab() {
         <main className="lab-main" id="main">
           <h1 className="lab-hero" id={scenes[0]?.id}>
             {profile.hero.lead}{" "}
-            {profile.hero.items.map((text, i) => (
-              <span key={text}>
-                <a href={`#${projects[i]?.slug ?? "main"}`}>
-                  {text}
+            {profile.hero.items.map((item, i) => (
+              <span key={item.slug}>
+                <a href={heroHref(item)}>
+                  {item.text}
                 </a>
                 {heroJoiner(i)}
               </span>

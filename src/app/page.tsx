@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
-import { heroJoiner, profile } from "@content/profile";
+import { heroHref, heroJoiner, profile } from "@content/profile";
 import { projects } from "@content/projects";
 import { about, contact, howIBuild } from "@content/site";
 import { Release } from "@/components/Release";
@@ -11,10 +11,6 @@ import "./home.css";
 
 export default function Home() {
   const mailto = `mailto:${profile.links.email}`;
-  const heroLinks = profile.hero.items.map((text, i) => ({
-    text,
-    slug: projects[i]?.slug,
-  }));
 
   return (
     <>
@@ -26,15 +22,11 @@ export default function Home() {
         <main className="main" id="main">
           <h1 className="hero">
             {profile.hero.lead}{" "}
-            {heroLinks.map((item, i) => (
-              <span key={item.text}>
-                {item.slug ? (
-                  <a className="hero-link" href={`#${item.slug}`} style={{ "--i": i } as CSSProperties}>
-                    {item.text}
-                  </a>
-                ) : (
-                  item.text
-                )}
+            {profile.hero.items.map((item, i) => (
+              <span key={item.slug}>
+                <a className="hero-link" href={heroHref(item)} style={{ "--i": i } as CSSProperties}>
+                  {item.text}
+                </a>
                 {heroJoiner(i)}
               </span>
             ))}
