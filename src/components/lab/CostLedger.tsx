@@ -22,14 +22,24 @@ type Props = {
   perQuestion: string;
   /** How many tokens the cold question was measured at: the swarm draws exactly this many. */
   tokens: number;
-  copy: { scrub: string; now: string; minutes: string; hours: string; note: string; dot: string; total: string };
+  copy: {
+    scrub: string;
+    hint: string;
+    now: string;
+    minutes: string;
+    hours: string;
+    note: string;
+    dot: string;
+    total: string;
+  };
 };
 
 const amount = (cost: string) => Number(cost.replace(/[^\d.]/g, ""));
 
 /**
  * Seminar's per-question cost as something to drag. The axis ends at "now";
- * the handle is the previous question. Inside the cache window the stable
+ * the handle is the previous question, in the human colour because moving it
+ * is the reader's doing. Inside the cache window the stable
  * part of the prompt is read from cache and the cost drops, and the prompt's
  * tokens, drawn one by one beside it, settle into a block.
  */
@@ -38,6 +48,12 @@ export function CostLedger({ cold, warm, windowMinutes, blocks, breakpoint, perQ
   const span = windowMinutes * 2;
   // Position on the axis in minutes; the right edge is now. Starts cold.
   const [position, setPosition] = useState(windowMinutes / 2);
+  // The invitation to drag. Gone for good once the reader has moved the handle.
+  const [invited, setInvited] = useState(true);
+  const move = (minutes: number) => {
+    setPosition(minutes);
+    setInvited(false);
+  };
   const ago = span - position;
   const isWarm = ago < windowMinutes;
   const active = isWarm ? warm : cold;
@@ -57,7 +73,7 @@ export function CostLedger({ cold, warm, windowMinutes, blocks, breakpoint, perQ
   const level = (isWarm ? floor : top) / 100;
 
   return (
-    <figure className="ledger lab-term" data-cache={isWarm ? "warm" : "cold"}>
+    <figure className="ledger lab-term" data-cache={isWarm ? "warm" : "cold"} data-invited={invited ? "" : undefined}>
       <div className="ledger-read">
         <p className="ledger-cost">
           <span className="ledger-figure">{active.cost}</span>
@@ -70,7 +86,13 @@ export function CostLedger({ cold, warm, windowMinutes, blocks, breakpoint, perQ
       </div>
 
       <div className="ledger-swarm">
-        <TokenSwarm count={tokens} warm={isWarm} label={`${cold.detail}. ${copy.dot}`} />
+        <TokenSwarm
+          count={tokens}
+          warm={isWarm}
+          label={`${cold.detail}. ${copy.dot}`}
+          // A shortcut for the drag: a click on the tokens asks again 20 minutes later.
+          onPress={() => move(span - windowMinutes / 3)}
+        />
         <p className="ledger-note">
           <strong>{cold.detail}.</strong> {copy.dot} {copy.total}
         </p>
@@ -97,7 +119,9 @@ export function CostLedger({ cold, warm, windowMinutes, blocks, breakpoint, perQ
           <span className="ledger-level" data-side="warm" aria-hidden="true">
             {warm.cost}
           </span>
-          <span className="ledger-handle" aria-hidden="true" />
+          <span className="ledger-handle" aria-hidden="true">
+            {invited && <span className="ledger-hint">{copy.hint}</span>}
+          </span>
           <input
             id={id}
             type="range"
@@ -105,7 +129,7 @@ export function CostLedger({ cold, warm, windowMinutes, blocks, breakpoint, perQ
             max={span}
             step={1}
             value={position}
-            onChange={(event) => setPosition(Number(event.target.value))}
+            onChange={(event) => move(Number(event.target.value))}
             aria-valuetext={`${duration(ago)}: ${active.state}, ${active.cost}`}
           />
         </div>

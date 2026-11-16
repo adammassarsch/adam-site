@@ -372,8 +372,9 @@ export function Lanes({ min, max, classes, description, labels, copy }: Props) {
     const resized = new ResizeObserver(resize);
     resized.observe(el);
     const watched = new IntersectionObserver(
-      ([entry]) => {
-        visible = entry?.isIntersecting ?? false;
+      (entries) => {
+        // Several changes can arrive in one call; only the latest is true now.
+        visible = entries.at(-1)?.isIntersecting ?? false;
         if (visible) play();
         else pause();
       },

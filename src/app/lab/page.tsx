@@ -32,6 +32,7 @@ const copy = {
   },
   ledger: {
     scrub: "Time since the last question",
+    hint: "Drag into the cache →",
     cold: "cold",
     warm: "warm",
     now: "now",

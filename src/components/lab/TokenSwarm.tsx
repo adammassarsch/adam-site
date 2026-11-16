@@ -9,6 +9,8 @@ type Props = {
   warm: boolean;
   /** What the drawing shows, for screen readers. */
   label: string;
+  /** A click or tap on the drawing. The slider beside it does the same from the keyboard. */
+  onPress?: () => void;
 };
 
 /** Seconds: the tokens rain in, settle into the block, and come loose again. */
@@ -49,10 +51,12 @@ void main() {
   float b = hash(id * 3u + 1u);
   float c = hash(id * 3u + 2u);
 
+  // The drift's phase is its own random number: tied to the position, it draws stripes.
+  float d = hash(id * 5u + 11u) * 6.283;
   float t = u_time * (0.15 + 0.35 * c);
   vec2 drift = 0.035 * vec2(
-    sin(t + a * 6.283) + 0.5 * sin(t * 1.7 + b * 40.0),
-    cos(t * 0.9 + b * 6.283) + 0.5 * cos(t * 1.3 + a * 40.0)
+    sin(t + d) + 0.5 * sin(t * 1.7 + c * 6.283),
+    cos(t * 0.9 + c * 6.283) + 0.5 * cos(t * 1.3 + d)
   );
   vec2 loose = (vec2(a, b) * 0.92 + 0.04 + drift) * u_res;
 
@@ -119,7 +123,7 @@ function rgba(hex: string, alpha: number): [number, number, number, number] {
  * Needs WebGL 2. Without it, or without scripting, the figure is not shown
  * (see lab.css) and the number stays in the text beside it.
  */
-export function TokenSwarm({ count, warm, label }: Props) {
+export function TokenSwarm({ count, warm, label, onPress }: Props) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const target = useRef(warm);
   const wake = useRef<() => void>(() => {});
@@ -265,8 +269,9 @@ export function TokenSwarm({ count, warm, label }: Props) {
     const resized = new ResizeObserver(resize);
     resized.observe(el);
     const watched = new IntersectionObserver(
-      ([entry]) => {
-        visible = entry?.isIntersecting ?? false;
+      (entries) => {
+        // Several changes can arrive in one call; only the latest is true now.
+        visible = entries.at(-1)?.isIntersecting ?? false;
         if (visible) play();
         else pause();
       },
@@ -293,5 +298,5 @@ export function TokenSwarm({ count, warm, label }: Props) {
     };
   }, [count]);
 
-  return <canvas ref={canvas} className="swarm-canvas" role="img" aria-label={label} />;
+  return <canvas ref={canvas} className="swarm-canvas" role="img" aria-label={label} onClick={onPress} />;
 }

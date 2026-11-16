@@ -641,6 +641,7 @@
   height: 100%;
   min-height: 15rem;
   touch-action: pan-y;
+  cursor: pointer;
 }
 
 /* No WebGL 2: no drawing, and no claim about its dots. */
@@ -705,42 +706,80 @@
 }
 
 /* The previous question: a line through the chart with a dot on the cost it lands on. */
+/* The previous question: a line through the chart with a knob on the cost it
+   lands on. Moving it is the reader's doing, so it is in the human colour. */
 .ledger-handle {
   position: absolute;
   top: 0;
   bottom: 0;
   left: calc(var(--thumb) / 2 + (100% - var(--thumb)) * var(--at));
   width: 0;
-  border-left: 1px solid var(--ink);
+  border-left: 2px solid var(--human);
+  margin-left: -1px;
   pointer-events: none;
 }
 
 .ledger-handle::before {
-  content: "";
+  content: "↔";
   position: absolute;
   top: calc(0.5rem + var(--chart) * var(--level));
-  left: -0.4375rem;
-  width: 0.8125rem;
-  height: 0.8125rem;
-  margin-top: -0.40625rem;
-  background: var(--ink);
-}
-
-.ledger[data-cache="warm"] .ledger-handle::before {
-  background: var(--cached);
+  left: -1px;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  margin: -1rem 0 0 -1rem;
+  border: 2px solid var(--ground);
+  border-radius: 50%;
+  background: var(--human);
+  color: var(--ground);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .ledger-handle::after {
   content: "";
   position: absolute;
   bottom: 0;
-  left: -0.6875rem;
-  width: 1.3125rem;
+  left: -0.75rem;
+  width: 1.5rem;
   height: 0.5rem;
-  background: var(--ink);
+  margin-left: -1px;
+  background: var(--human);
 }
 
-/* The native range is the whole axis: keyboard, touch and pointer for free. */
+/* The invitation, pointing at the warm hour. It rides on the handle. */
+.ledger-hint {
+  position: absolute;
+  top: 2.6rem;
+  left: 0.75rem;
+  padding: 0.2rem 0.75rem;
+  border-radius: 999px;
+  background: var(--human);
+  color: var(--ground);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+@keyframes ledger-nudge {
+  0%,
+  55%,
+  100% {
+    transform: none;
+  }
+
+  72% {
+    transform: translateX(0.5rem);
+  }
+
+  86% {
+    transform: translateX(0.125rem);
+  }
+}
+
+/* The native range is the whole axis: keyboard, touch and pointer for free.
+   Focused from the keyboard, the ring goes round the whole axis. */
 .ledger-axis input {
   position: absolute;
   inset: 0;
@@ -1250,6 +1289,11 @@
 /* Motion. Each rule holds the final state back, then lets it arrive once. */
 
 @media (prefers-reduced-motion: no-preference) {
+  /* Until the first drag the handle leans toward the cache now and then. */
+  .lab[data-live] .ledger[data-invited] .ledger-handle {
+    animation: ledger-nudge 2.6s ease-in-out infinite;
+  }
+
   .lab[data-live] [data-watch]:not([data-seen]) .lab-ticks li {
     background: transparent;
     color: transparent;
