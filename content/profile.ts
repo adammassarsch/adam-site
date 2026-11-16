@@ -56,7 +56,7 @@ export const profile = {
       value: "Hands-on workshop with their AI engineer on a production lead-gen pipeline",
     },
     { label: "Based", value: "Stockholm and Västerås" },
-    { label: "Looking for", value: "A part-time internship building AI products", essential: true },
+    { label: "Looking for", value: "Part-time work or an internship building AI products", essential: true },
   ] satisfies Vital[],
 } as const;
 

@@ -12,7 +12,7 @@ Recruiters and engineers at AI companies who are screening candidates. They get 
 
 ## Product Purpose
 
-The portfolio of Adam Massarsch, an economics student at Mälardalen University who builds AI products. It works as his CV. Success means a visitor understands who Adam is and what he has built from the hero and the first project alone, and emails him about a part-time internship building AI products.
+The portfolio of Adam Massarsch, an economics student at Mälardalen University who builds AI products. It works as his CV. Success means a visitor understands who Adam is and what he has built from the hero and the first project alone, and emails him about part-time work or an internship building AI products.
 
 ## Positioning
 

@@ -1,0 +1,325 @@
+/* Mockup 2, Specifikationen: a white fact sheet. Blue only on links. */
+
+body:has(.sp) {
+  background: #fff;
+}
+
+.sp {
+  --ink: #111;
+  --blue: #0b5fff;
+  --mute: #6b6b6b;
+  --line: #e2e2e2;
+
+  background: #fff;
+  color: var(--ink);
+  font-family: var(--s-sans), system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  font-feature-settings: normal;
+  min-height: 100vh;
+}
+
+.sp a,
+.sp .sp-link {
+  color: var(--blue);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 1px;
+  cursor: pointer;
+}
+
+.sp :focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+.sp-mono,
+.sp dt,
+.sp thead th,
+.sp-nav,
+.sp-n {
+  font-family: var(--s-mono), ui-monospace, monospace;
+  font-size: 13px;
+}
+
+/* One row of links; on mobile the row scrolls sideways */
+.sp-nav {
+  display: flex;
+  gap: 1.75rem;
+  padding: 1rem clamp(16px, 4vw, 3rem);
+  border-bottom: 1px solid var(--line);
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: none;
+}
+
+.sp-nav a {
+  text-decoration: none;
+}
+
+.sp .sp-nav-name {
+  color: var(--ink);
+  margin-right: auto;
+}
+
+.sp-main {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 0 clamp(16px, 4vw, 3rem) 5rem;
+}
+
+/* Opening: three rows, Who / Built / Looking for */
+.sp-sheet {
+  margin-top: clamp(2rem, 6vw, 4.5rem);
+  border-top: 1px solid var(--ink);
+}
+
+.sp-sheet > div {
+  display: grid;
+  grid-template-columns: 9rem minmax(0, 1fr);
+  gap: 1.5rem;
+  padding: 1.1rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.sp-sheet dt {
+  color: var(--mute);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding-top: 0.35em;
+}
+
+.sp-sheet dd {
+  font-size: 20px;
+  line-height: 1.4;
+  max-width: 44rem;
+}
+
+.sp h1 {
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.sp-sub {
+  display: block;
+  color: var(--mute);
+  font-size: 16px;
+  margin-top: 0.25rem;
+}
+
+.sp-sec {
+  margin-top: 4.5rem;
+}
+
+.sp h2 {
+  font-size: 13px;
+  font-family: var(--s-mono), ui-monospace, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 400;
+  color: var(--mute);
+  margin-bottom: 0.75rem;
+}
+
+.sp-lead {
+  max-width: 44rem;
+  margin-bottom: 1.25rem;
+}
+
+.sp-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-top: 1px solid var(--ink);
+}
+
+.sp-table th,
+.sp-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.9rem 1.25rem 0.9rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.sp-table thead th {
+  color: var(--mute);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding-top: 0.6rem;
+  padding-bottom: 0.6rem;
+}
+
+.sp-table tbody th {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.sp-num {
+  font-family: var(--s-mono), ui-monospace, monospace;
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.sp-none {
+  color: var(--mute);
+}
+
+.sp-table td.sp-mono {
+  color: var(--mute);
+  min-width: 13rem;
+}
+
+.sp-actions {
+  display: flex;
+  gap: 1rem;
+  white-space: nowrap;
+}
+
+.sp-link {
+  font: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+
+.sp-how th {
+  width: 18rem;
+}
+
+.sp-how .sp-n {
+  color: var(--mute);
+  width: 2.5rem;
+}
+
+.sp-contact {
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 44rem);
+  gap: 1.5rem;
+  align-items: start;
+  border-top: 1px solid var(--ink);
+  padding-top: 1.25rem;
+}
+
+.sp-photo {
+  width: 100%;
+  height: auto;
+}
+
+.sp-sheet-small {
+  margin-top: 1.25rem;
+  border-top-color: var(--line);
+}
+
+.sp-sheet-small dd {
+  font-size: 16px;
+}
+
+.sp-foot {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.5rem clamp(16px, 4vw, 3rem);
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+}
+
+.sp-dialog {
+  margin: auto;
+  width: min(56rem, calc(100vw - 32px));
+  padding: 0;
+  border: 0;
+  background: #fff;
+}
+
+.sp-dialog::backdrop {
+  background: rgb(0 0 0 / 0.6);
+}
+
+.sp-dialog video {
+  display: block;
+  width: 100%;
+  background: #000;
+}
+
+.sp-dialog form {
+  padding: 0.75rem 1rem;
+  text-align: right;
+}
+
+/* Mobile: each table row becomes a stacked block */
+@media (max-width: 720px) {
+  .sp h1 {
+    font-size: 24px;
+  }
+
+  .sp-sheet > div {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+
+  .sp-sheet dd {
+    font-size: 17px;
+  }
+
+  .sp-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .sp-table tr {
+    display: grid;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .sp-table th,
+  .sp-table td {
+    display: grid;
+    grid-template-columns: 6.5rem minmax(0, 1fr);
+    gap: 0.75rem;
+    border: 0;
+    padding: 0.2rem 0;
+    white-space: normal !important;
+    max-width: none !important;
+  }
+
+  .sp-table [data-label]::before {
+    content: attr(data-label);
+    font-family: var(--s-mono), ui-monospace, monospace;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--mute);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding-top: 0.15em;
+  }
+
+  .sp-table td.sp-actions {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .sp-actions::before {
+    width: 6.5rem;
+    flex: none;
+    margin-right: -0.25rem;
+  }
+
+  .sp-how .sp-n {
+    display: none;
+  }
+
+  .sp-how th,
+  .sp-how td {
+    grid-template-columns: 1fr;
+    width: auto;
+  }
+
+  .sp-contact {
+    grid-template-columns: 5rem 1fr;
+  }
+}
