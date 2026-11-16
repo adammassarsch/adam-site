@@ -171,6 +171,7 @@ export function Brevet({ copy: t }: { copy: BrevetCopy }) {
             <section id="about" aria-labelledby="bv-about" className="bv-sec">
               <h2 id="bv-about">{t.about.title}</h2>
               <p>{t.about.text}</p>
+              <p>{t.about.background}</p>
               <dl className="bv-facts">
                 {t.about.facts.map((f) => (
                   <div key={f.label}>

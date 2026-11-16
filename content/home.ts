@@ -58,8 +58,11 @@ export const homeProjects: HomeProject[] = [
   },
 ];
 
+/** Vitals already told elsewhere: studies and basketball in about.background, what Adam is looking for in contact.text. */
+const told = new Set(["Studying", "Before", "National team", "Looking for"]);
+
 /** profile.vitals, moved into About, labels kept. */
-export const aboutFacts = profile.vitals.filter((v) => v.label !== "Looking for");
+export const aboutFacts = profile.vitals.filter((v) => !told.has(v.label));
 
 type Link = { href: string; label: string };
 
@@ -83,7 +86,7 @@ export type BrevetCopy = {
     videoLabel: string;
   }[];
   how: { title: string; intro: string; principles: { title: string; text: string; link?: Link }[] };
-  about: { title: string; text: string; facts: { label: string; value: string }[] };
+  about: { title: string; text: string; background: string; facts: { label: string; value: string }[] };
   contact: { title: string; text: string; source: string };
 };
 
@@ -115,7 +118,12 @@ const en: BrevetCopy = {
       link: "link" in p ? p.link : undefined,
     })),
   },
-  about: { title: about.title, text: about.text, facts: aboutFacts.map((f) => ({ label: f.label, value: f.value })) },
+  about: {
+    title: about.title,
+    text: about.text,
+    background: about.background,
+    facts: aboutFacts.map((f) => ({ label: f.label, value: f.value })),
+  },
   contact: { title: contact.title, text: contact.text, source: "Source for this site" },
 };
 
@@ -191,10 +199,9 @@ const sv: BrevetCopy = {
   about: {
     title: "Om mig",
     text: "Jag började bygga med AI för att lösa problem jag såg omkring mig: att förbereda seminarier och att hitta rätt företag att sälja till.",
+    background:
+      "Innan kod var det basket: landslaget U16–U20, Årets rookie i Basketligan och sedan NCAA Division II på Western Colorado University, med 4.0 i snitt och plats på Dean’s List. Nu läser jag Ekonomprogrammet på MDU och bygger med AI.",
     facts: [
-      { label: "Studerar", value: "Ekonomprogrammet, Mälardalens universitet, år 1" },
-      { label: "Tidigare", value: "Western Colorado University, basket, 2025–26" },
-      { label: "Landslaget", value: "Svenska basketlandslaget · U16, U18, U20" },
       { label: "Tagd, 2026", value: "Praktisk workshop med deras AI-ingenjör om en lead-gen-pipeline i produktion" },
       { label: "Bor", value: "Stockholm och Västerås" },
     ],
