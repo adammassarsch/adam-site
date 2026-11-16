@@ -45,6 +45,6 @@ export const about = {
 
 export const contact = {
   title: "Let’s talk",
-  text: "I’m looking for a part-time internship building AI products.",
+  text: "I’m looking for part-time work or an internship building AI products.",
   action: "Email me",
 } as const;
