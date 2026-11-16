@@ -41,6 +41,9 @@ export const howIBuild = {
 export const about = {
   title: "About",
   text: "I started building with AI to solve problems I saw around me: preparing for seminars, and finding the right companies to sell to.",
+  /** Confirmed by Adam, 2026-11-16. */
+  background:
+    "Before code, basketball: Swedish national team U16–U20, Rookie of the Year in Basketligan, then NCAA Division II at Western Colorado University with a 4.0 GPA and Dean’s List. Now studying economics at MDU and building with AI.",
 } as const;
 
 export const contact = {
