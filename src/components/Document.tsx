@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Script from "next/script";
 import type { Lang } from "@content/home";
 
 type Props = {
@@ -10,7 +11,7 @@ type Props = {
   children: ReactNode;
 };
 
-/** The <html> every root layout renders: its language, and a skip link to #main. */
+/** The <html> every root layout renders: its language, a skip link to #main, and Vercel Web Analytics. */
 export function Document({ lang, className, skip, children }: Props) {
   return (
     <html lang={lang} className={className}>
@@ -19,6 +20,8 @@ export function Document({ lang, className, skip, children }: Props) {
           {skip}
         </a>
         {children}
+        {/* Vercel Web Analytics: cookieless page views, served once enabled for the project. */}
+        <Script src="/_vercel/insights/script.js" strategy="afterInteractive" />
       </body>
     </html>
   );
